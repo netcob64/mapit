@@ -190,7 +190,7 @@ declare class mxCellMarker {
    * @param {mxCellState} state
    * @param {boolean} isValid
    */
-  getMarkerColor(evt: mxEvent, state: mxCellState, isValid: boolean): string;
+  getMarkerColor(evt: any, state: mxCellState, isValid: boolean): string;
 
   /**
    * Uses getCell, getStateToMark and intersects to return the mxCellState for the given mxMouseEvent.
@@ -228,7 +228,15 @@ declare class mxCellMarker {
 declare class mxConstraintHandler {
 
 }
-
+declare class mxGraphHandler {
+  constructor();
+  guidesEnabled;
+  useGuidesForEvent(me);
+}
+declare class mxKeyHandler {
+constructor(graph:mxGraph);
+bindKey(key, handler);
+}
 declare class mxEdgeHandler {
 
   /** Graph event handler that reconnects edges and modifies control points and the edge label location.
@@ -322,19 +330,19 @@ declare class mxEdgeHandler {
    * Returns true if virtual bends should be added.  This returns true if virtualBendsEnabled is true and the current style allows and renders custom waypoints.
    * @param {mxEvent} evt
    */
-  isVirtualBendsEnabled(evt: mxEvent): boolean;
+  isVirtualBendsEnabled(evt: any): boolean;
 
   /**
    * Returns true if the given event is a trigger to add a new point.  This implementation returns true if shift is pressed.
    * @param {mxEvent} evt
    */
-  isAddPointEvent(evt: mxEvent): boolean;
+  isAddPointEvent(evt: any): boolean;
 
   /**
    * Returns true if the given event is a trigger to remove a point.  This implementation returns true if shift is pressed.
    * @param {mxEvent} evt
    */
-  isRemovePointEvent(evt: mxEvent): boolean;
+  isRemovePointEvent(evt: any): boolean;
 
   /**
    * Returns the list of points that defines the selection stroke.
@@ -608,7 +616,7 @@ declare class mxEdgeHandler {
    * @param {mxCellState} state
    * @param {mxEvent} evt
    */
-  addPoint(state: mxCellState, evt: mxEvent): void;
+  addPoint(state: mxCellState, evt: any): void;
 
   /**
    * Adds a control point at the given point.

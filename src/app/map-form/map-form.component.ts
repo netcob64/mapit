@@ -64,7 +64,8 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
 
   ngAfterViewInit() {
-    const graph = new mxGraph(this.graphContainerRef.nativeElement);
+
+    /*const graph = new mxGraph(this.graphContainerRef.nativeElement);
 
     try {
       const parent = graph.getDefaultParent();
@@ -87,8 +88,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     // from the onLoad event handler of the document (see below).
     // Overridden to define per-shape connection points
     
-    /*
-
+    */
    mxGraph.prototype.getAllConnectionConstraints = function(terminal , source) {
         if (terminal != null && terminal.shape != null) {
             if (terminal.shape.stencil != null) {
@@ -102,6 +102,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
         return null;
     };
+
      // Defines the default constraints for all shapes
     mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
         new mxConnectionConstraint(new mxPoint(0.5, 0), true),

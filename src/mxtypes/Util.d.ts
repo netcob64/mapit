@@ -1,4 +1,5 @@
 /******************      Util      **************/
+declare var mxUtils;
 
 /** Common interfaces for Utils */
 declare module Util {
@@ -85,14 +86,21 @@ declare class mxImage {
 
 }
 
+declare var mxConstants;
 
 /**
  * Cross-browser DOM event support
  */
+ /*
 declare class mxEvent {
   static ADD: any;
   static REMOVE: any;
 }
+
+
+*/
+
+declare var mxEvent;
 
 declare class mxMouseEvent {
   consumed;

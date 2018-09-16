@@ -1,7 +1,7 @@
 /******************      View          **************/
 
 declare class mxCellState {
-
+constructor(view, cell, style);
   cell: any;
 
 }
@@ -50,4 +50,8 @@ declare class mxHierarchicalLayout {
 
   execute(parent: any);
 
+}
+
+declare class mxConnectionConstraint {
+  constructor(point: any, perimeter: any,  name?: any );
 }

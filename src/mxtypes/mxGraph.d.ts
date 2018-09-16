@@ -3,6 +3,7 @@
 /// <reference path="View.d.ts"/>
 /// <reference path="Handlers.d.ts"/>
 /// <reference path="Shape.d.ts"/>
+/// <reference path="mxClient.d.ts"/>
 
 declare class mxGraph {
 
@@ -18,7 +19,7 @@ declare class mxGraph {
   cellRenderer;
   multiplicities;
   renderHint;
-  dialect;
+  dialect;s
   gridSize;
   gridEnabled;
   portsEnabled;
