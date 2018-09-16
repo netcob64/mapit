@@ -1,0 +1,172 @@
+<div class="theForm">
+  <h2>Meta Class : {{ model.name | uppercase }}<span class="info" *ngIf="isToBeSaved"> (not saved)</span></h2>
+  <table>
+    <tr>
+      <td>
+        <label>ID : </label> #{{model.id}}
+      </td>
+      <td>
+        <mat-form-field>
+          <input matInput [(ngModel)]="model.name" placeholder="Data type">
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field>
+          <input matInput [(ngModel)]="model.label" placeholder="Label">
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field>
+          <input matInput [(ngModel)]="model.version" placeholder="Verion" disabled>
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field>
+          <mat-select [(ngModel)]="model.status" placeholder="Statut">
+            <!--<mat-option value=""></mat-option>-->
+            <mat-option value="DRAFT">Brouillon</mat-option>
+            <mat-option value="ACTIVE">Actif</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        System Attributes
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <table cellspacing="0">
+      <tr class="tabLineHead">
+        <th>Name</th>
+        <th>Label</th>
+        <th>Type</th>
+        <th>Values</th>
+      </tr>
+      <tr class="tabLine" *ngFor="let attr of model.attributes">
+        <ng-container *ngIf="attr.isSystem">
+          <td>{{attr.name}}</td>
+          <td>{{attr.label}}</td>
+          <td>{{attr.type}}</td>
+          <td>{{attr.values}}</td>
+        </ng-container>
+      </tr>
+    </table>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Attributes
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <table>
+      <tr class="tabLineHead">
+        <td>
+          <button mat-button (click)="AddAttribute($event)">
+            <mat-icon>note_add</mat-icon>
+          </button>
+        </td>
+        <th>Name</th>
+        <th>Label</th>
+        <th>Type</th>
+        <th>Values</th>
+      </tr>
+      <tr class="tabLine" *ngFor="let attr of model.attributes">
+        <ng-container *ngIf="!attr.isSystem">
+          <td>
+            <button mat-button (click)="DeleteAttribute(attr)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+          <td>
+            <mat-form-field>
+              <input matInput [(ngModel)]="attr.name">
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <input matInput [(ngModel)]="attr.label">
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-select [(ngModel)]="attr.type">
+                <mat-option value="TXT">Texte</mat-option>
+                <mat-option value="NUM">Nombre</mat-option>
+                <mat-option value="LIST">Liste</mat-option>
+                <mat-option value="BOOL">Booleen</mat-option>
+                <mat-option value="DATE">Date</mat-option>
+                <mat-option value="TIME">Time</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field *ngIf="attr.type == ItObjectAttributeType.LIST">
+              <input matInput [(ngModel)]="attr.values" [disabled]="attr.valSystem == true">
+            </mat-form-field>
+          </td>
+        </ng-container>
+      </tr>
+    </table>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Relations
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <table>
+      <tr class="tabLineHead">
+        <td>
+          <button mat-button (click)="AddRelation($event)">
+            <mat-icon>note_add</mat-icon>
+          </button>
+        </td>
+        <th>Name</th>
+        <th>Entity</th>
+        <th>Label</th>
+        <th>?</th>
+      </tr>
+      <tr class="tabLine" *ngFor="let rel of model.relations">
+        <ng-container *ngIf="!rel.isSystem">
+          <td>
+            <button mat-button (click)="DeleteRelation(rel)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+          <td>
+            <mat-form-field>
+              <input matInput [(ngModel)]="rel.name">
+            </mat-form-field>
+          </td>
+
+          <td>
+            <mat-form-field>
+              <mat-select [(ngModel)]="rel.entity">
+
+                <mat-option  *ngFor="let e of guiCtrl.metamodels" [value]="e.id">{{e.label}}</mat-option>
+         
+              </mat-select>
+            </mat-form-field>
+          </td>          <td>
+            <mat-form-field>
+              <input matInput [(ngModel)]="rel.label">
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field *ngIf="rel.type == ItObjectAttributeType.LIST">
+              <input matInput [(ngModel)]="rel.values" [disabled]="rel.valSystem == true">
+            </mat-form-field>
+          </td>
+        </ng-container>
+      </tr>
+    </table>
+  </mat-expansion-panel>
+  <mat-error *ngIf="error">
+    {{errorMessage}}
+  </mat-error>
+  <br>
+  <button mat-raised-button (click)="Save();">Save</button>
+  <button *ngIf="error" mat-raised-button color="warn" (click)="Reload();">Reload</button>
+</div>

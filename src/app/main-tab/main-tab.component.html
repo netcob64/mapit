@@ -1,0 +1,18 @@
+<mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)" [selectedIndex]="guiCtrl.activeTabIndex">
+  <mat-tab *ngFor="let tab of guiCtrl.tabs">
+   
+    <ng-template mat-tab-label >
+      {{ tab.label }}
+      <!--<button mat-icon-button (click)="close(tab.id, $event)"> TEST passing html elt from $event -->
+      <button mat-icon-button (click)="guiCtrl.DeleteTabContent(tab);">
+        <mat-icon aria-label="close tab">close</mat-icon>
+      </button>
+    </ng-template>
+    <div class="tab-content">
+      <div style="padding:16px;" *ngIf="tab.type == TabContentType.TXT" [innerHTML]="tab.content.html|keepHtml"></div>
+      <app-application-form *ngIf="tab.type == TabContentType.APP" [application]="tab.content" [guiCtrl]="guiCtrl"></app-application-form>
+      <app-metamodel-form *ngIf="tab.type == TabContentType.META_MODEL" [model]="tab.content" [guiCtrl]="guiCtrl"></app-metamodel-form>
+      <app-map-form *ngIf="tab.type == TabContentType.MAP" [map]="tab.content" [guiCtrl]="guiCtrl"></app-map-form>
+    </div>
+  </mat-tab>
+</mat-tab-group>

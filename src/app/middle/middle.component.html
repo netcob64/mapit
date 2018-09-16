@@ -1,0 +1,31 @@
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side" opened="{{guiCtrl.IsSidenavIsOpen()}}" position="start" (closed)="OnClose()">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="panelOpenState" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Applications
+          </mat-panel-title>
+          <mat-panel-description>
+            <a mat-line (click)="AddNewApplication($event)"><mat-icon>note_add</mat-icon></a>
+
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-application-list [guiCtrl]="guiCtrl"></app-application-list>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Meta Models
+          </mat-panel-title>
+          <mat-panel-description>
+            <a mat-line (click)="AddNewMetamodel($event)"><mat-icon>note_add</mat-icon></a>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-metamodel-list [guiCtrl]="guiCtrl"></app-metamodel-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-sidenav>
+  <app-main-tab  [guiCtrl]="guiCtrl"></app-main-tab>
+</mat-sidenav-container>
+<app-footer #footer *ngIf="guiCtrl.debugIsVisible" [guiCtrl]="guiCtrl"></app-footer>

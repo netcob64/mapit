@@ -1,0 +1,60 @@
+<div class="appForm">
+  <h2>Application: {{ application.name | uppercase }}<span class="info" *ngIf="isToBeSaved"> (not saved)</span></h2>
+  <table>
+    <tr>
+      <td>
+        <label>ID</label>
+      </td>
+      <td>#{{application.id}}</td>
+    </tr>
+    <tr>
+      <td>
+        <mat-form-field>
+          <input matInput [(ngModel)]="application.name" placeholder="Name">
+        </mat-form-field>
+      </td>
+      <td colspan="2">
+        <mat-form-field>
+           <mat-select [(ngModel)]="application.type" placeholder="Type">
+            <mat-option value=""></mat-option>
+            <mat-option value="PRO">Progiciel</mat-option>
+            <mat-option value="SPEC">Développement spécifique</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <mat-form-field>
+          <mat-select [(ngModel)]="application.status" placeholder="Statut">
+            <mat-option value=""></mat-option>
+            <mat-option value="PROD">En Production</mat-option>
+            <mat-option value="PROJ">En Projet</mat-option>
+            <mat-option value="ARCH">Archive</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker1" placeholder="Valide de" [(ngModel)]="application.validityStart">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </td>
+      <td colspan="2">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker2" placeholder="Valide jusqu' à" [(ngModel)]="application.validityEnd">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <mat-error *ngIf="error">
+    {{errorMessage}}
+  </mat-error>
+  <br>
+  <button mat-raised-button (click)="Save();">Save</button>
+</div>

@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="shadowed menu">
+  <span>{{guiCtrl.GetApplicationTitle()}}</span>
+  <mat-icon>home</mat-icon>
+  <mat-icon>more_vert</mat-icon>
+  <button mat-button (click)="guiCtrl.SidenavShowHide()" i18n="display menu">Display Slidenav</button>
+  <button mat-button [matMenuTriggerFor]="menuAdmin">Admin</button>
+ <mat-menu #menuAdmin="matMenu" yPosition="below" [overlapTrigger]="false">
+    <button mat-menu-item (click)="guiCtrl.AddNewMetamodel()" i18n="meta model menu">Meta Modele</button>
+  </mat-menu>
+  <button mat-button (click)="guiCtrl.DebugShowHide()">Show Debug{{(guiCtrl.nbError > 0 ? ' (' + guiCtrl.nbError + ')' : '')}}</button>
+  <span class="fill-remaining-space"></span>
+  <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu" yPosition="below" [overlapTrigger]="false">
+    <button mat-menu-item (click)="guiCtrl.Logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span>Sign out</span></button>
+    <button mat-menu-item>
+      <mat-icon>account_box</mat-icon>
+      <span>Profile</span></button>
+  </mat-menu>
+</mat-toolbar>

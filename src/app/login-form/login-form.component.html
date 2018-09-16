@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" class="shadowed menu">
+  <span>{{guiCtrl.GetApplicationTitle()}}</span>
+  <mat-icon>home</mat-icon>
+</mat-toolbar>
+<div style="color:#fff;margin:50px;display:flex;align-items: center;flex-direction: column;">
+  <h1>{{guiCtrl.GetApplicationTitle()}} Loggin</h1>
+  <p>You must sign in</p>
+  <mat-form-field>
+    <input #loginInput matInput [(ngModel)]="login" placeholder="Login: " (keypress)="PasswordFocus($event);" autofocus>
+  </mat-form-field>
+  <mat-form-field>
+    <input #passwordInput type="password" matInput [(ngModel)]="password" placeholder="Password: " (keypress)="Validate($event);">
+  </mat-form-field>
+  <mat-error *ngIf="!guiCtrl.first">
+    Incorrect login or password. Please try again.
+  </mat-error>
+  <br>
+  <div>
+    <button mat-raised-button (click)="Login();" color="warn">Ok</button>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+#msgBox {
+	margin: 10px;
+	padding: 10px;
+	overflow-x: hidden;
+    overflow-y: auto;
+	color: #fff;
+	font-size: 16px;
+	font-family: Courier;
+}
+
+#header {
+	background-color: #ccc;
+	margin: 10px;
+	padding: 10px;
+	font-size: 18px;
+	font-weight: bolder;
+}
+
+table {
+	width: 100%;
+}
+
+#close, #clear {
+	text-align: right;
+
+}
+
+#closeBtn, #clearBtn {
+	cursor: pointer;
+}
+
+#msgBox p span.error b {
+	color: #f00;
+}

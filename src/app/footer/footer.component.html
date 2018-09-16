@@ -1,0 +1,13 @@
+<div id="header">
+<table>
+  <tr>
+    <td>DEBUG window</td>
+    <td>{{guiCtrl.nbError > 0 ? guiCtrl.nbError + ' error(s)' : ''}}</td>
+    <td id="clear"><span id="clearBtn" (click)="guiCtrl.ClearMessage()">Clear</span></td>
+    <td id="close"><span id="closeBtn" (click)="guiCtrl.DebugShowHide()">X</span></td>
+  </tr>
+</table>
+</div>
+<div id="msgBox" [innerHTML]="guiCtrl.footerMessage|keepHtml">
+</div>
+

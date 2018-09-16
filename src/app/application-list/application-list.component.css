@@ -1,0 +1,21 @@
+.mat-list[dense] .mat-list-item, .mat-nav-list[dense] .mat-list-item, .mat-selection-list[dense] .mat-list-item {
+    /*height: 22px;*/
+}
+.mat-menu-item {
+	font-size: 12px;
+	/*line-height: 28px;
+	height:28px;*/
+}
+.mat-button {
+min-width: 20px;
+padding:0px;
+}
+
+mat-list {
+	padding: 0px;
+}
+
+
+.mat-list-item-content {
+	padding:0px;
+}

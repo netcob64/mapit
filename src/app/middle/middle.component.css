@@ -1,0 +1,11 @@
+mat-sidenav-container {
+	height:100%;
+}
+app-footer {
+  background-color: #000a;
+  position: absolute;
+  bottom:0px;top:0px;
+  max-height: 100%;
+  z-index: 4;
+  width:100%;
+}
