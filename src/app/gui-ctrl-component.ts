@@ -6,7 +6,7 @@ import { ItMap } from './core/models/it-map';
 import { TabContentType } from './core/models/tab-content-type';
 import { ItObjectClass } from './core/models/it-object-class';
 import { DataService } from './core/services/data.service';
-import { DataServiceDataType } from './core/services/data-service-data-type';
+import { DataServiceDataType } from './core/services/data.service.data.type';
 
 class TabContent {
   type: TabContentType;
@@ -30,6 +30,7 @@ export class GuiCtrlComponent  {
   //workWidth: number;
   //footer: ElementRef;
 
+test : boolean = true;
 
 
   constructor(private dataService: DataService) {

@@ -1,11 +1,22 @@
-<div class="graphHeader">
-  <button mat-icon-button><mat-icon>exit_to_app</mat-icon></button>
-  <button mat-icon-button><mat-icon>account_box</mat-icon></button>
-   <button mat-icon-button><mat-icon>account_circle</mat-icon></button>
-</div>
-<div class="graphBody">
 
-    Map name:&nbsp;{{map.name}}<br>Application:&nbsp;{{map.getAsset().name}}
-  
-    <div #graphContainer style="background-color: #444;"></div>
-  </div>
+<div class="graphHeader">
+  <button mat-icon-button>
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
+  <button mat-icon-button>
+    <mat-icon>account_box</mat-icon>
+  </button>
+  <button mat-icon-button>
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</div>
+
+<div class="graphBody">
+	
+  <!--Map name:&nbsp;{{map.name}}<br>-->
+  Application:&nbsp;{{map.getAsset().name}}
+
+<!-- style="position:relative; REQUIRED for mxGRAPH selection box and shape text edition -->
+  <div #graphContainer style="position:relative;background-color: rgb(48,48,48);margin:5px;"></div>
+
+</div>

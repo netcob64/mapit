@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { ItApplication } from '../core/models/it-application';
 import { DataService } from '../core/services/data.service';
-import { DataServiceDataType } from '../core/services/data-service-data-type';
+import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 
 @Component({

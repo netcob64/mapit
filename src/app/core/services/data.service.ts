@@ -5,7 +5,7 @@ import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ItAsset } from '../models/it-asset';
 import { GuiCtrlComponent } from '../../gui-ctrl-component';
-import { DataServiceDataType } from './data-service-data-type';
+import { DataServiceDataType } from './data.service.data.type';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

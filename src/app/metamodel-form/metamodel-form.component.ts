@@ -4,7 +4,7 @@ import { ItObjectAttribute } from '../core/models/it-object-attribute';
 import { ItObjectRelation } from '../core/models/it-object-relation';
 import { ItObjectAttributeType } from '../core/models/it-object-attribute-type';
 import { DataService } from '../core/services/data.service';
-import { DataServiceDataType } from '../core/services/data-service-data-type';
+import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 
 @Component({

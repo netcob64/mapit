@@ -1,17 +1,12 @@
-
-
 .graphHeader {}
 
 .graphBody {
-	color:white;
-	border: 1px solid #555;
-	margin: 5px;
+  color: white;
+  border: 0px solid #555;
+  margin: 5px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 5px;
+  padding: 0px;
 }
-canvas {
-	width: 500px;
-	height:500px;
-}
+

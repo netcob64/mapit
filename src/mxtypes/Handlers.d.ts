@@ -231,11 +231,13 @@ declare class mxConstraintHandler {
 declare class mxGraphHandler {
   constructor();
   guidesEnabled;
+  rotationEnabled;
   useGuidesForEvent(me);
 }
 declare class mxKeyHandler {
 constructor(graph:mxGraph);
 bindKey(key, handler);
+enter(handler);
 }
 declare class mxEdgeHandler {
 
