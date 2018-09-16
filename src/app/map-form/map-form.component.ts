@@ -64,7 +64,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
 
   ngAfterViewInit() {
-
+//this.graphContainerRef.nativeElement.
     /*const graph = new mxGraph(this.graphContainerRef.nativeElement);
 
     try {
