@@ -43,8 +43,11 @@ test : boolean = true;
         html: `<h1>Welcome</h1>
       <h3>TODO</h3>
       <ul>
-        <li>Changer le footer pour une fenetre transparente qui s"affiche avec le menu "Show Debug"...</li>
+        <li>mxGraph Management base sur les evt CELLS_ADDED...</li>
         <li>Geston de l'objet meta model...: <b>revoir l'IHM des gestion des attr system</b></li>
+        <li>Authentification</li>
+        <li>Gestion des version des objet</li>
+        <li>Parametrage de la visu des graph en fonction de la date</li>
       </ul>
     </div>`}
     };
@@ -210,6 +213,18 @@ test : boolean = true;
     this.activeTab = this.tabs[0];
   }
 
+  //-------------------------
+  // ItMap management
+  //-------------------------
+
+  maps: ItMap[];
+  MapSaved(map: ItMap, isNew: boolean) {
+    if (isNew) {
+      this.maps = this.maps.concat(map);
+    } else {
+      this.maps = this.maps.filter(a => a !== map).concat(map);
+    }
+  }
   //-------------------------
   // ItApplication management
   //-------------------------

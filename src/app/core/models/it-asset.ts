@@ -10,3 +10,4 @@ export class ItAsset {
   validityStart: string;
   validityEnd:string;
 }
+

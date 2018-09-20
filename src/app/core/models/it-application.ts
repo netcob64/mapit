@@ -7,4 +7,5 @@ export class ItApplication extends ItAsset {
   	super();
   	this.status=ItAssetStatus.PROJECT;
   }
+  toString():string {return this.name;}
 }
