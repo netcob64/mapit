@@ -28,18 +28,30 @@ export class MxGraph {
     this.graph.getModel().endUpdate();
   }
 
-  public insertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): void {
+  public insertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
+    return this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
   }
 
-public setValue(cell, value) {
-     //this.graph.model.setValue(cell, value);
-     //this.graph.getView().getState(cell).setLabel(value);
-     var state : mxCellState;
-     state = this.graph.getView().getState(cell);
-}
+  public insertEdge(value, sourceAsset, targetAsset, x: number, y: number, w: number, h: number): any {
+    //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
+    //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
+    return this.graph.insertEdge(this.parent, null, value, sourceAsset, targetAsset, 'labelBackgroundColor=' + bgColor + ';');
+  }
+
+  public setValue(cell, value) {
+    //
+    //this.graph.getView().getState(cell).setLabel(value);
+   
+    this.graph.model.setValue(cell, value);
+    /*this.graph.getView().clear(cell, false, false);
+    this.graph.getView().validate();
+    this.graph.refresh(); */
+    console.log('MxGrpah.setValue()');
+    console.log(cell);
+    console.log(value);
+  }
 
   public constructor(container: Element) {
     mxGraph.prototype.getAllConnectionConstraints = function(terminal, source) {
@@ -149,36 +161,41 @@ public setValue(cell, value) {
       var cellLabelChanged = this.graph.cellLabelChanged;
       this.graph.cellLabelChanged = function(cell, value, autoSize) {
 
-      if(cell.value!=null){
-        arguments[1]=cell.value;
-        cell.value.name=value;
-      }
+        if (cell.value != null) {
+          arguments[1] = cell.value;
+          cell.value.name = value;
+        }
 
 
-       cellLabelChanged.apply(this, arguments);
+        cellLabelChanged.apply(this, arguments);
       }
 
       this.graph.convertValueToString = function(cell) {
-        /*if (mxUtils.isNode(cell.value))  {
-          return cell.getAttribute('label', '');
-        }*/
-        if (cell.value != null)
-          return cell.value.name;
-        else
+        console.log('MxGraph.convertValueToString() ==> cell.value =');
+        console.log(cell.value);
+        if (cell.value != null) {
+          if (cell.value.name != undefined) {
+            return cell.value.name;
+          } else {
+            return cell.value;
+          }
+        } else {
           return null;
+        }
       };
 
 
       // Adds cells to the model in a single step
-      /*this.graph.getModel().beginUpdate();
+      /*
+      this.graph.getModel().beginUpdate();
       var v1;
       try {
-        v1 = this.graph.insertVertex(this.parent, null, 'SAP', 20, 40, 80, 70);
-        var v2 = this.graph.insertVertex(parent, null, 'Opale', 200, 140, 80, 40);
-        var e1 = this.graph.insertEdge(parent, null, 'client', v1, v2, 'labelBackgroundColor=' + bgColor + ';');
-        var v3 = this.graph.insertVertex(parent, null, 'Indigo', 20, 200, 80, 40);
-        this.graph.insertEdge(parent, null, 'document', v1, v3, 'labelBackgroundColor=' + bgColor + ';horizontal=0;');
-        this.graph.insertEdge(parent, null, 'message', v2, v3, 'labelBackgroundColor=' + bgColor + ';horizontal=1;');
+        v1 = this.graph.insertVertex(this.parent, null, 'CasqIT', 20, 40, 80, 70);
+        var v2 = this.graph.insertVertex(this.parent, null, 'Opale', 200, 140, 80, 40);
+        var e1 = this.graph.insertEdge(this.parent, null, 'client', v1, v2, 'labelBackgroundColor=' + bgColor + ';');
+        var v3 = this.graph.insertVertex(this.parent, null, 'Indigo', 20, 200, 80, 40);
+        this.graph.insertEdge(this.parent, null, 'document', v1, v3, 'labelBackgroundColor=' + bgColor + ';horizontal=0;');
+        this.graph.insertEdge(this.parent, null, 'message', v2, v3, 'labelBackgroundColor=' + bgColor + ';horizontal=1;');
       } finally {
         // Updates the display
         this.graph.getModel().endUpdate();

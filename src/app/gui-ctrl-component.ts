@@ -55,6 +55,9 @@ test : boolean = true;
     //this.ShowError('coucou');
   }
 
+  GetApplicationByName(appName): ItApplication {
+    return this.applications.find(function(app) { return app.name == appName; });
+  }
   GetApplicationTitle(): string {
     return this.app.title;
   }

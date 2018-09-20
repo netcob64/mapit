@@ -59,11 +59,14 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(
       data => {
+        if (data!=undefined){
         this.graph.beginUpdate();
         console.log('message label =>'+data.description);
+        
         this.graph.setValue(cell, data.description);
         this.graph.endUpdate();
          console.log(this.graph);
+       }
       }
     );
 
@@ -81,16 +84,12 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   private _filter(value: string): string[] {
     const availableApplications = this.guiCtrl.applications.map(app => app.name);
     const filterValue = value.toLowerCase();
-
-
     return availableApplications.filter(appName => appName.toLowerCase().includes(filterValue));
     //return this.availableApplications.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  AddApplication(evt: Event) {
-    let appName: string = this.appSelectionControl.value;
-    let appAsset: ItApplication = this.guiCtrl.applications.find(function(app) { return app.name == appName; });
-    this.graph.insertVertex(appAsset, 10, 10, 50, 50);
+  AddApplication(evt: Event) { 
+    this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -148,7 +147,12 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
     this.graph.beginUpdate();
     try {
-      this.graph.insertVertex(this.map.getAsset(), 20, 40, 80, 70);
+      let c1 = this.graph.insertVertex(this.map.getAsset(), 20, 40, 80, 70);
+      /*
+      let m = this.guiCtrl.GetApplicationByName('moSaic');
+      let c2 = this.graph.insertVertex(m, 20, 40, 80, 70);
+      this.graph.insertEdge(m, c1, c2, 20, 40, 80, 70);
+      */
     } catch (error) {
       console.error(error);
     } finally {
