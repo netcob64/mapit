@@ -1,4 +1,6 @@
-.graphHeader {}
+.graphHeader {
+	/*margin-left:5px;*/
+}
 
 .graphBody {
   color: white;

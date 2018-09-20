@@ -19,6 +19,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 
@@ -34,8 +35,9 @@ import { MiddleComponent } from './middle/middle.component';
 import { ApplicationFormComponent } from './application-form/application-form.component';
 import { MetamodelFormComponent } from './metamodel-form/metamodel-form.component';
 import { MapFormComponent } from './map-form/map-form.component';
+import { MapFormDialogComponent } from './map-form/map-form-dialog.component';
 import { LoginFormComponent } from './login-form/login-form.component'
-import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 
 
 import { ApplicationListComponent } from './application-list/application-list.component';
@@ -68,7 +70,8 @@ import { EscapeHtmlPipe } from './core/util';
     EscapeHtmlPipe,
     MetamodelFormComponent,
     MetamodelListComponent,
-    MapFormComponent
+    MapFormComponent,
+    MapFormDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -90,9 +93,12 @@ import { EscapeHtmlPipe } from './core/util';
     MatInputModule,
     MatDatepickerModule, MatNativeDateModule,
     MatSelectModule,
-    HttpClientModule
+    HttpClientModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule
   ],
   providers: [AppDataService, DataService, {provide: MAT_DATE_LOCALE, useValue: 'fr-FR'}],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [MapFormDialogComponent]
 })
 export class AppModule { }

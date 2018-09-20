@@ -1,4 +1,4 @@
-import {ItAsset} from '../models/it-asset';
+import { ItAsset } from '../models/it-asset';
 
 
 const edgeFtColor: string = "rgb(227,205,90)";
@@ -16,8 +16,11 @@ export class MxGraph {
   public registerAddCellHandler(handler: Function): void {
     this.graph.addListener(mxEvent.CELLS_ADDED, handler);
   }
+  public registerBeforeAddVertexHandler(handler: Function): void {
+    this.graph.addListener(mxEvent.BEFORE_ADD_VERTEX, handler);
+  }
 
-   public beginUpdate(): void {
+  public beginUpdate(): void {
     this.graph.getModel().beginUpdate();
   }
 
@@ -25,9 +28,18 @@ export class MxGraph {
     this.graph.getModel().endUpdate();
   }
 
-   public insertVertex(asset: ItAsset, x : number, y:number, w: number, h: number): void {
-     return this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
+  public insertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): void {
+    //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
+    //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
+    this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
   }
+
+public setValue(cell, value) {
+     //this.graph.model.setValue(cell, value);
+     //this.graph.getView().getState(cell).setLabel(value);
+     var state : mxCellState;
+     state = this.graph.getView().getState(cell);
+}
 
   public constructor(container: Element) {
     mxGraph.prototype.getAllConnectionConstraints = function(terminal, source) {
@@ -74,7 +86,7 @@ export class MxGraph {
         return !mxEvent.isAltDown(me.getEvent());
       };
       mxGraphHandler.prototype.rotationEnabled = true;
-     
+
       mxConstants.GUIDE_COLOR = guideColor;
       mxConstants.OUTLINE_HIGHLIGHT_COLOR = "#F0F000";
       mxConstants.OUTLINE_HIGHLIGHT_STROKEWIDTH = 1;
@@ -82,7 +94,7 @@ export class MxGraph {
       mxConstants.HIGHLIGHT_COLOR = '#FF0000';
       mxConstants.CONNECT_TARGET_COLOR = 'red';
       mxConstants.EDGE_SELECTION_COLOR = 'pink';
-        // Defines the guides to be 1 pixel (default)
+      // Defines the guides to be 1 pixel (default)
       mxConstants.GUIDE_STROKEWIDTH = 1;
 
       // Enables snapping waypoints to terminals
@@ -133,6 +145,29 @@ export class MxGraph {
       // Gets the default parent for inserting new cells. This
       // is normally the first child of the root (ie. layer 0).
       this.parent = this.graph.getDefaultParent();
+
+      var cellLabelChanged = this.graph.cellLabelChanged;
+      this.graph.cellLabelChanged = function(cell, value, autoSize) {
+
+      if(cell.value!=null){
+        arguments[1]=cell.value;
+        cell.value.name=value;
+      }
+
+
+       cellLabelChanged.apply(this, arguments);
+      }
+
+      this.graph.convertValueToString = function(cell) {
+        /*if (mxUtils.isNode(cell.value))  {
+          return cell.getAttribute('label', '');
+        }*/
+        if (cell.value != null)
+          return cell.value.name;
+        else
+          return null;
+      };
+
 
       // Adds cells to the model in a single step
       /*this.graph.getModel().beginUpdate();

@@ -1,10 +1,19 @@
-import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit, ElementRef } from '@angular/core';
 import { ItMap } from '../core/models/it-map';
+import { ItApplication } from '../core/models/it-application';
 import { DataService } from '../core/services/data.service';
 import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 import { MxGraph } from '../core/mxgraph/mx.graph';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MapFormDialogComponent } from './map-form-dialog.component'
 
+export interface DialogData {
+  name: string;
+}
 
 //declare var mxClient : any;
 
@@ -18,22 +27,70 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   @ViewChild('graphContainer') graphContainerRef: ElementRef;
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() map: ItMap;
+  @Input() searchAppStr: string = 'app';
+
+  appSelectionControl = new FormControl();
+  //availableApplications: string[] = ['One', 'Two', 'Three'];
+
+
+  filteredOptions: Observable < string[] > ;
 
   error: boolean = false;
   errorMessage: string = null;
   prev: ItMap;
   isToBeSaved: boolean = false;
   graph: MxGraph;
+  dialogResult: DialogData;
 
-  constructor(private dataService: DataService) {
-
+  constructor(private dataService: DataService, private dialog: MatDialog) {
     this.dataService.SetDataType(DataServiceDataType.MAP);
-
   }
 
+  OpenDialog(cell: any): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {
+
+    };
+
+    const dialogRef = this.dialog.open(MapFormDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      data => {
+        this.graph.beginUpdate();
+        console.log('message label =>'+data.description);
+        this.graph.setValue(cell, data.description);
+        this.graph.endUpdate();
+         console.log(this.graph);
+      }
+    );
+
+  }
   ngOnInit() {
     this.Clone();
 
+    this.filteredOptions = this.appSelectionControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+  }
+
+  private _filter(value: string): string[] {
+    const availableApplications = this.guiCtrl.applications.map(app => app.name);
+    const filterValue = value.toLowerCase();
+
+
+    return availableApplications.filter(appName => appName.toLowerCase().includes(filterValue));
+    //return this.availableApplications.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  AddApplication(evt: Event) {
+    let appName: string = this.appSelectionControl.value;
+    let appAsset: ItApplication = this.guiCtrl.applications.find(function(app) { return app.name == appName; });
+    this.graph.insertVertex(appAsset, 10, 10, 50, 50);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -65,12 +122,30 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
 
   ngAfterViewInit() {
+    const mapform: MapFormComponent = this;
     this.graph = new MxGraph(this.graphContainerRef.nativeElement);
+    /*this.graph.registerBeforeAddVertexHandler(function(sender, evt) {
+      console.log('BEFORE_ADD_VERTEX:');
+    });*/
+
     this.graph.registerAddCellHandler(function(sender, evt) {
       console.log('CELLS_ADDED:');
       console.log(evt);
-      console.log(sender);
+
+      let cells = evt.getProperty('cells');
+      if (cells != null && cells[0].isEdge()) {
+        let source = evt.getProperty('source');
+        let target = evt.getProperty('target');
+        if (source != null) {
+          console.log('source:' + source.value.name);
+        }
+        if (target != null) {
+          console.log('target:' + target.value.name);
+        }
+        mapform.OpenDialog(cells[0]);
+      }
     });
+
     this.graph.beginUpdate();
     try {
       this.graph.insertVertex(this.map.getAsset(), 20, 40, 80, 70);
@@ -82,20 +157,16 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   }
 
   ngAfterViewChecked() {
-    //console.log('ngAfterViewChecked');
-    //console.log('app: ' + JSON.stringify(this.application));
-
-    //console.log('prev: ' + JSON.stringify(this.prev));
     if (this.NotEqual(this.map, this.prev) || this.map.id == null) {
       this.isToBeSaved = true;
     } else {
       this.isToBeSaved = false;
     }
   }
+
   NotEqual(o1, o2): boolean {
     var equal: boolean;
     equal = JSON.stringify(o1).localeCompare(JSON.stringify(o2)) == 0;
     return !equal;
   }
-
 }

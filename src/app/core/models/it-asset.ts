@@ -8,6 +8,10 @@ export class ItAsset {
   status: ItAssetStatus; 
   version: number;
   validityStart: string;
-  validityEnd:string;
+  validityEnd: string;
+
+  public getClassName(): string {
+  	return this.constructor.name;
+  }
 }
 

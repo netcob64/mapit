@@ -1,20 +1,29 @@
 
 <div class="graphHeader">
-  <button mat-icon-button>
-    <mat-icon>exit_to_app</mat-icon>
+  
+  <span style="margin-left: 5px;margin-right: 5px;">App:</span> 
+   <input type="text" matInput [formControl]="appSelectionControl" [matAutocomplete]="auto">
+    <mat-autocomplete autoActiveFirstOption="false" #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
+ <button mat-icon-button (click)="AddApplication($event)">
+    <mat-icon>note_add</mat-icon>
   </button>
-  <button mat-icon-button>
+  <button mat-icon-button (click)="OpenDialog()">
     <mat-icon>account_box</mat-icon>
   </button>
   <button mat-icon-button>
     <mat-icon>account_circle</mat-icon>
   </button>
+
 </div>
 
 <div class="graphBody">
 	
   <!--Map name:&nbsp;{{map.name}}<br>-->
-  Application:&nbsp;{{map.getAsset().name}}
+  <!--Application:&nbsp;{{map.getAsset().name}}-->
 
 <!-- style="position:relative; REQUIRED for mxGRAPH selection box and shape text edition -->
   <div #graphContainer style="position:relative;background-color: rgb(48,48,48);margin:5px;"></div>
