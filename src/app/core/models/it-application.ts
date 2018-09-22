@@ -1,11 +1,18 @@
-import { ItAsset } from './it-asset';
-import { ItAssetStatus } from './it-asset-status';
+import { ItAsset, ItAssetStatus } from './it-asset';
+import { ItMessage } from './it-message';
 
 export class ItApplication extends ItAsset {
+	private outMessages: ItMessage[];
+	constructor() {
+		super();
+		this.status=ItAssetStatus.PROJECT;
+	}
+	public addMessage(message: ItMessage): void {
+		this.outMessages.concat(message);
+	}
+}
 
-  constructor() {
-  	super();
-  	this.status=ItAssetStatus.PROJECT;
-    console.log(this);
-  }
+
+export class ItApplicationList  {
+  applications: ItApplication[];
 }

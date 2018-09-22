@@ -1,5 +1,5 @@
 
-export class ItObjectRelation {
+export class ItMetamodelRelation {
 	id: number;
 	classId: string;
 	name: string;

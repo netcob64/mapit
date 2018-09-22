@@ -1,5 +1,4 @@
-import { ItAsset } from './it-asset';
-import { ItAssetStatus } from './it-asset-status';
+import { ItAsset, ItAssetStatus } from './it-asset';
 
 export class ItMap extends ItAsset {
 	asset : ItAsset;

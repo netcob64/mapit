@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit, Input } from '@angular/core';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 import { ItApplication } from '../core/models/it-application';
+import { MatTreeModule } from '@angular/material/tree';
 
 @Component({
   selector: 'app-middle',

@@ -4,7 +4,7 @@ import { ItAsset } from './core/models/it-asset';
 import { ItApplication } from './core/models/it-application';
 import { ItMap } from './core/models/it-map';
 import { TabContentType } from './core/models/tab-content-type';
-import { ItObjectClass } from './core/models/it-object-class';
+import { ItMetamodel } from './core/models/it-metamodel';
 import { DataService } from './core/services/data.service';
 import { DataServiceDataType } from './core/services/data.service.data.type';
 
@@ -71,17 +71,17 @@ export class GuiCtrlComponent {
   //-------------------------
   // Meta model management
   //-------------------------
-  metamodels: ItObjectClass[];
+  metamodels: ItMetamodel[];
   AddNewMetamodel() {
     this.AddMetamodelTab('NEW META MODEL');
   }
 
-  EditMetamodel(model: ItObjectClass) {
+  EditMetamodel(model: ItMetamodel) {
     console.log(JSON.stringify(model));
     this.AddMetamodelTab(model);
   }
 
-  MetamodelSaved(model: ItObjectClass, isNew: boolean) {
+  MetamodelSaved(model: ItMetamodel, isNew: boolean) {
     if (isNew) {
       this.metamodels = this.metamodels.concat(model);
     } else {
@@ -89,7 +89,7 @@ export class GuiCtrlComponent {
     }
   }
 
-  DeleteMetamodel(model: ItObjectClass) {
+  DeleteMetamodel(model: ItMetamodel) {
     console.log("Delete model id=" + model.id + ", name=" + model.name);
     this.dataService.SetDataType(DataServiceDataType.META_MODEL);
     this.dataService.Delete(model).subscribe(data => this.DeleteMetamodelDataHandler(data));
@@ -113,7 +113,7 @@ export class GuiCtrlComponent {
     this.AddMessage('GetMetamodelsDataHandler: ' + JSON.stringify(data));
    
      if (data['data']!=undefined){
-      this.metamodels =data['data'].map(jsonApp => new ItObjectClass().setFromJson(jsonApp));
+      this.metamodels =data['data'].map(jsonApp => new ItMetamodel().setFromJson(jsonApp));
     }
   }
   //-------------------------
@@ -182,16 +182,16 @@ export class GuiCtrlComponent {
     this.AddTabContent(newTab);
   }
 
-  private AddMetamodelTab(objClass: string | ItObjectClass): void {
-    var obj: ItObjectClass;
+  private AddMetamodelTab(objClass: string | ItMetamodel): void {
+    var obj: ItMetamodel;
 
     if (typeof objClass == 'string') {
-      obj = new ItObjectClass();
+      obj = new ItMetamodel();
       obj.name = objClass;
     } else {
       obj = objClass;
     }
-    console.log(JSON.stringify(obj));
+    //console.log(JSON.stringify(obj));
 
     var newTab: TabContent = {
       type: TabContentType.META_MODEL,
@@ -269,7 +269,7 @@ export class GuiCtrlComponent {
   }
 
   GetApplicationDataHandler(data: any): void {
-    
+
     this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
     if (data['data']!=undefined){
       //this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));

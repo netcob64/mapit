@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit, ElementRef } from '@angular/core';
 import { ItMap } from '../core/models/it-map';
 import { ItApplication } from '../core/models/it-application';
+import { ItMessage } from '../core/models/it-message';
 import { DataService } from '../core/services/data.service';
 import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
@@ -46,9 +47,9 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     this.dataService.SetDataType(DataServiceDataType.MAP);
   }
 
-  OpenDialog(cell: any): void {
+  OpenDialog(cell: mxCell): void {
+    // cell is current selected edge
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
@@ -60,11 +61,17 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data != undefined) {
+          // Create new message
+          const msg : ItMessage = new ItMessage();
+          msg.setData(data.description);
+          msg.setSource(cell.source.value);
+          msg.setTarget(cell.target.value);
+
           this.graph.beginUpdate();
-          console.log('message label =>' + data.description);
-          this.graph.setValue(cell, data.description);
+          //console.log('message label =>' + data.description);
+          this.graph.setValue(cell, msg);
           this.graph.endUpdate();
-          console.log(this.graph);
+          //console.log(this.graph);
         } else {
           // no name provided for link -> remove created edge
           console.log('NO NAME FORM LINK');
@@ -119,7 +126,10 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   }
 
   SaveDataHandler(data: any): void {
-    if (data.status != 'success') {
+    if (data ==undefined)  {
+      this.error = true;
+      this.errorMessage = 'no object found';
+    } else if (data.status != 'success') {
       this.error = true;
       this.errorMessage = data.message;
     } else {

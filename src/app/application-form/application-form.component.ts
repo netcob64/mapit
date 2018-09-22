@@ -35,7 +35,7 @@ export class ApplicationFormComponent implements AfterViewChecked, AfterViewInit
   }
 
   SaveDataHandler(data: any): void {
-    if (data.status != 'success'){
+    if (data==undefined || data.status != 'success'){
       this.error = true;
       this.errorMessage = data.message;
     } else {

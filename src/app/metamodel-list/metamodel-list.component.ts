@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
-import { ItObjectClass } from '../core/models/it-object-class';
+import { ItMetamodel } from '../core/models/it-metamodel';
 
 @Component({
   selector: 'app-metamodel-list',
@@ -15,12 +15,12 @@ export class MetamodelListComponent implements OnInit {
 
 	ngOnInit() {}
 
-	Delete(model : ItObjectClass, event:Event): void {		
+	Delete(model : ItMetamodel, event:Event): void {		
 		event.stopPropagation();
 		this.guiCtrl.DeleteMetamodel(model);
 	}
 
-	Edit(model: ItObjectClass, event:Event): void {	
+	Edit(model: ItMetamodel, event:Event): void {	
 		event.stopPropagation();
 		this.guiCtrl.EditMetamodel(model);
 	}

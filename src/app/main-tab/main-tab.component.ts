@@ -14,7 +14,7 @@ export class MainTabComponent {
 	TabContentType = TabContentType;
 	@ViewChild('tabGroup') tabGroup : MatTabGroup;
 	@Input() guiCtrl: GuiCtrlComponent;
-	selectedTab:number;
+	selectedTab: number;
 
 	constructor() { }
 
@@ -22,9 +22,8 @@ export class MainTabComponent {
 	}
 
 	tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-		console.log('tabChangeEvent => ', tabChangeEvent);
-		console.log('index => ', tabChangeEvent.index);
-		console.log('tabGroup => selectedIndex', this.tabGroup.selectedIndex);
+		let str :string ='MainTabComponent.tabChanged : tabChangeEvent => index => '+ tabChangeEvent.index+' / tabGroup.selectedIndex='+ this.tabGroup.selectedIndex;
+		console.log(str);
 	}
 
 	SelectTab(index) {

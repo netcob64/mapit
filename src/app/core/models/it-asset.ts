@@ -1,4 +1,8 @@
-import { ItAssetStatus } from './it-asset-status';
+export enum ItAssetStatus {
+  PROJECT="PROD",
+  PRODUCTION="PROJ",
+  ARCHIVE="ARCH"
+}
 
 export class ItAsset {
   className:string;
@@ -12,18 +16,18 @@ export class ItAsset {
   validityEnd: string;
 
   constructor(){
-    this._class=this.constructor.name;    
+    this.className=this.constructor.name;    
   }
 
    setFromJson(jsonData: Object) : ItAsset {
     this.className=this.constructor.name;  
      for (var prop in jsonData){
 
-    console.log(prop+' => '+ jsonData[prop]);
+       //console.log(prop+' => '+ jsonData[prop]);
        this[prop] = jsonData[prop];
      }
  
-    console.log(this);
+    //console.log(this);
     return this;
    }
 

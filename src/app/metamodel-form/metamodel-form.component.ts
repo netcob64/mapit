@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
-import { ItObjectClass } from '../core/models/it-object-class';
-import { ItObjectAttribute } from '../core/models/it-object-attribute';
-import { ItObjectRelation } from '../core/models/it-object-relation';
-import { ItObjectAttributeType } from '../core/models/it-object-attribute-type';
+import { ItMetamodel } from '../core/models/it-metamodel';
+import { ItMetamodelAttribute, ItMetamodelAttributeType } from '../core/models/it-metamodel-attribute';
+import { ItMetamodelRelation } from '../core/models/it-metamodel-relation';
 import { DataService } from '../core/services/data.service';
 import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
@@ -16,12 +15,12 @@ import { GuiCtrlComponent } from '../gui-ctrl-component';
 export class MetamodelFormComponent implements AfterViewChecked, AfterViewInit {
 
   @Input() guiCtrl: GuiCtrlComponent;
-  @Input() model: ItObjectClass;
+  @Input() model: ItMetamodel;
   error : boolean = false;
   errorMessage : string = null;
-  prev: ItObjectClass;
+  prev: ItMetamodel;
   isToBeSaved: boolean ;
-  ItObjectAttributeType = ItObjectAttributeType;
+  ItMetamodelAttributeType = ItMetamodelAttributeType;
 
 
   constructor(private dataService: DataService) {
@@ -38,17 +37,17 @@ export class MetamodelFormComponent implements AfterViewChecked, AfterViewInit {
     this.guiCtrl.AddMessage('CHANGE: ' + JSON.stringify(changes.model));
   }
   AddAttribute(event: Event) {
-    var attr:ItObjectAttribute  = new ItObjectAttribute(ItObjectAttributeType.TXT,"","");
+    var attr:ItMetamodelAttribute  = new ItMetamodelAttribute(ItMetamodelAttributeType.TXT,"","");
     this.model.attributes.push(attr);
   }
-  DeleteAttribute(attr:ItObjectAttribute){
+  DeleteAttribute(attr:ItMetamodelAttribute){
     this.model.attributes = this.model.attributes.filter(a => a !== attr);
   }
    AddRelation(event:Event) {
-    var rel:ItObjectRelation  = new ItObjectRelation();
+    var rel:ItMetamodelRelation  = new ItMetamodelRelation();
     this.model.relations.push(rel);
   }
-  DeleteRelation(rel:ItObjectRelation){
+  DeleteRelation(rel:ItMetamodelRelation){
     this.model.relations = this.model.relations.filter(r => r !== rel);
   }
   Save(): void {

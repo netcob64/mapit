@@ -20,8 +20,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-
+import { MatTreeModule } from '@angular/material/tree';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { MainTabComponent } from './main-tab/main-tab.component';
 import { HeaderComponent } from './header/header.component';
@@ -89,12 +90,14 @@ import { EscapeHtmlPipe } from './core/util';
     MatIconModule,
     MatGridListModule,
     MatListModule,
+    MatTreeModule,
     FormsModule,
     MatInputModule,
     MatDatepickerModule, MatNativeDateModule,
     MatSelectModule,
     HttpClientModule,
     MatAutocompleteModule,
+    MatProgressBarModule,
     ReactiveFormsModule
   ],
   providers: [AppDataService, DataService, {provide: MAT_DATE_LOCALE, useValue: 'fr-FR'}],
