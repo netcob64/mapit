@@ -6,5 +6,6 @@ export class ItApplication extends ItAsset {
   constructor() {
   	super();
   	this.status=ItAssetStatus.PROJECT;
+    console.log(this);
   }
 }

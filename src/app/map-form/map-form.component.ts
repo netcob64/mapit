@@ -59,18 +59,25 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(
       data => {
-        if (data!=undefined){
-        this.graph.beginUpdate();
-        console.log('message label =>'+data.description);
-        
-        this.graph.setValue(cell, data.description);
-        this.graph.endUpdate();
-         console.log(this.graph);
-       }
+        if (data != undefined) {
+          this.graph.beginUpdate();
+          console.log('message label =>' + data.description);
+          this.graph.setValue(cell, data.description);
+          this.graph.endUpdate();
+          console.log(this.graph);
+        } else {
+          // no name provided for link -> remove created edge
+          console.log('NO NAME FORM LINK');
+          this.graph.removeSelection();
+        }
       }
     );
-
   }
+  GraphInfo(){
+    console.log(this.graph.viewXML());
+
+        }
+
   ngOnInit() {
     this.Clone();
 
@@ -88,8 +95,19 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     //return this.availableApplications.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  AddApplication(evt: Event) { 
+  AddApplication(evt: Event) {
     this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
+    this.appSelectionControl.setValue('');
+  }
+
+  RemoveSelectionFromMap() {
+    let cells = this.graph.removeSelection();
+    console.log(cells);
+    console.log(this.graph);
+  }
+
+  RemoveSelectionFromDataBase() {
+     alert('MapFormComponent.RemoveSelectionFromDataBase() TODO');
   }
 
   ngOnChanges(changes: SimpleChanges) {

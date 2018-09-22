@@ -2,11 +2,13 @@ import { ItAsset } from '../models/it-asset';
 
 
 const edgeFtColor: string = "rgb(227,205,90)";
-const bgColor = "rgb(48,48,48)";
+//const bgColor = "rgb(48,48,48)";
+const bgColor = "rgb(66,66,66)";
 const edgeBorderColor = "rgb(255,192,0)";
 const vertexBorderColor = 'white';
 const vertexFtColor = 'white';
-const guideColor = 'rgb(227,205,90)';
+const guideColor = '#c2185b';
+const selectionColor = '#00FFFF';
 
 export class MxGraph {
 
@@ -34,16 +36,26 @@ export class MxGraph {
     return this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
   }
 
-  public insertEdge(value, sourceAsset, targetAsset, x: number, y: number, w: number, h: number): any {
+  public insertEdge(value, sourceAsset: ItAsset, targetAsset:ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    return this.graph.insertEdge(this.parent, null, value, sourceAsset, targetAsset, 'labelBackgroundColor=' + bgColor + ';');
+    return this.graph.insertEdge(this.parent, null, value, sourceAsset, targetAsset);
+  }
+
+  public removeSelection(): any {
+    return this.graph.removeCells(this.graph.getSelectionCells(), true /* remove also connected edge*/ );
+  }
+
+  public viewXML(): string {
+    var encoder = new mxCodec();
+    var node = encoder.encode(this.graph.getModel());
+    return mxUtils.getPrettyXml(node);
   }
 
   public setValue(cell, value) {
     //
     //this.graph.getView().getState(cell).setLabel(value);
-   
+
     this.graph.model.setValue(cell, value);
     /*this.graph.getView().clear(cell, false, false);
     this.graph.getView().validate();
@@ -99,15 +111,11 @@ export class MxGraph {
       };
       mxGraphHandler.prototype.rotationEnabled = true;
 
-      mxConstants.GUIDE_COLOR = guideColor;
-      mxConstants.OUTLINE_HIGHLIGHT_COLOR = "#F0F000";
-      mxConstants.OUTLINE_HIGHLIGHT_STROKEWIDTH = 1;
-      mxConstants.HIGHLIGHT_STROKEWIDTH = 2;
-      mxConstants.HIGHLIGHT_COLOR = '#FF0000';
-      mxConstants.CONNECT_TARGET_COLOR = 'red';
-      mxConstants.EDGE_SELECTION_COLOR = 'pink';
+
+
       // Defines the guides to be 1 pixel (default)
       mxConstants.GUIDE_STROKEWIDTH = 1;
+      mxConstants.GUIDE_COLOR = guideColor;
 
       // Enables snapping waypoints to terminals
       mxEdgeHandler.prototype.snapToTerminals = true;
@@ -131,22 +139,45 @@ export class MxGraph {
 
 
 
-
+      // APP BOX
       var style = this.graph.getStylesheet().getDefaultVertexStyle();
       style[mxConstants.STYLE_FILLCOLOR] = bgColor;
       style[mxConstants.STYLE_STROKECOLOR] = vertexBorderColor;
       style[mxConstants.STYLE_FONTCOLOR] = vertexFtColor;
 
+      // LINK
       style = this.graph.getStylesheet().getDefaultEdgeStyle();
-      //style[mxConstants.STYLE_ROUNDED] = true;
+      style[mxConstants.STYLE_ROUNDED] = true;
       style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
       //style[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
-
       style[mxConstants.STYLE_STROKECOLOR] = edgeBorderColor;
       style[mxConstants.STYLE_FONTCOLOR] = edgeFtColor;
       style[mxConstants.STYLE_ENDARROW] = 'block';
-      style[mxConstants.EDGE_SELECTION_COLOR] = '#FFF000',
-        style[mxConstants.EDGE_SELECTION_DASHED] = false;
+      style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = bgColor;
+
+      //style[mxConstants.STYLE_LABEL_BORDERCOLOR] = '#0f0';
+
+      // ghost of mxCell during its move
+      mxConstants.OUTLINE_HIGHLIGHT_COLOR = "#000000";
+      mxConstants.OUTLINE_HIGHLIGHT_STROKEWIDTH = 1;
+
+      //??? no explanation about effect of those variables
+      mxConstants.HIGHLIGHT_STROKEWIDTH = 1;
+      mxConstants.HIGHLIGHT_COLOR = '#000';
+      mxConstants.CONNECT_TARGET_COLOR = 'red';
+      mxConstants.CONSTRAINT_HIGHLIGHT_SIZE = 10;
+      // Selection color parameters
+      mxConstants.EDGE_SELECTION_COLOR = selectionColor;
+      mxConstants.EDGE_SELECTION_STROKEWIDTH = 1;
+      mxConstants.EDGE_SELECTION_DASHED = 0;
+      mxConstants.VERTEX_SELECTION_COLOR = selectionColor;
+      mxConstants.VERTEX_SELECTION_STROKEWIDTH = 1;
+      mxConstants.VERTEX_SELECTION_DASHED = 0;
+
+      // Handle parameters
+      mxConstants.HANDLE_SIZE = 4;
+      mxConstants.HANDLE_FILLCOLOR = bgColor;
+      mxConstants.HANDLE_STROKECOLOR = selectionColor;
 
       //graph.alternateEdgeStyle = 'elbow=vertical';
       // Specifies the default edge style
@@ -186,7 +217,7 @@ export class MxGraph {
 
 
       // Adds cells to the model in a single step
-      /*
+      /**
       this.graph.getModel().beginUpdate();
       var v1;
       try {
@@ -242,27 +273,6 @@ export class MxGraph {
       keyHandler.bindKey(40, function() {
         nudge(40);
       });
-
-      // add buttons
-      /*
-      addButton = function (label, callback) {
-          var btn = document.createElement('button');
-          btn.textContent = label;
-          console.log(btn.getAttribute('style'));
-          btn.setAttribute('style', "background-color:" + mainBackgound + ';color:' + mainFont);
-          btnContainer.appendChild(btn);
-          btn.onclick = callback;
-      }
-
-      addButton("add Application", function() {
-              var v = graph.insertVertex(parent, null, 'Application', 200, 140, 80, 40);
-          });
-
-      addButton("add Decoration", function() {
-            
-              
-          })
-          */
 
     }
   }

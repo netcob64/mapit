@@ -16,22 +16,14 @@ class TabContent {
 
 @Component({
   selector: 'gui-ctrl',
-  template: ``,
-  /*
-  host: {
-    '(window:resize)': 'OnResize($event)'
-  }*/
+  template: ``
 })
 
-export class GuiCtrlComponent  {
+export class GuiCtrlComponent {
   me: GuiCtrlComponent = this;
   @Input() app: AppComponent;
-  //sidenavWidth: number;
-  //workWidth: number;
-  //footer: ElementRef;
 
-test : boolean = true;
-
+  test: boolean = true;
 
   constructor(private dataService: DataService) {
     dataService.guiCtrl = this;
@@ -44,12 +36,15 @@ test : boolean = true;
       <h3>TODO</h3>
       <ul>
         <li>mxGraph Management base sur les evt CELLS_ADDED...</li>
+        <li>Bug affichage quand Zoom Chrom actif....</li>
         <li>Geston de l'objet meta model...: <b>revoir l'IHM des gestion des attr system</b></li>
+        <li>Angular Material Tree component pour list des app?</li>
         <li>Authentification</li>
         <li>Gestion des version des objet</li>
         <li>Parametrage de la visu des graph en fonction de la date</li>
       </ul>
-    </div>`}
+    </div>`
+      }
     };
     this.AddTabContent(newTab);
     //this.ShowError('coucou');
@@ -72,7 +67,7 @@ test : boolean = true;
   IsSidenavIsOpen(): boolean {
     return this.sidenavIsOpen;
   }
-  
+
   //-------------------------
   // Meta model management
   //-------------------------
@@ -115,10 +110,11 @@ test : boolean = true;
   }
 
   GetMetamodelsDataHandler(data: any): void {
-    //console.log('MiddleComponent-->');
-    this.metamodels = data['data'];
     this.AddMessage('GetMetamodelsDataHandler: ' + JSON.stringify(data));
-    //console.log('MiddleComponent this.applications: '+JSON.stringify(this.applications)); 
+   
+     if (data['data']!=undefined){
+      this.metamodels =data['data'].map(jsonApp => new ItObjectClass().setFromJson(jsonApp));
+    }
   }
   //-------------------------
   // Login management
@@ -195,7 +191,7 @@ test : boolean = true;
     } else {
       obj = objClass;
     }
-     console.log(JSON.stringify(obj));
+    console.log(JSON.stringify(obj));
 
     var newTab: TabContent = {
       type: TabContentType.META_MODEL,
@@ -273,10 +269,12 @@ test : boolean = true;
   }
 
   GetApplicationDataHandler(data: any): void {
-    //console.log('MiddleComponent-->');
-    this.applications = data['data'];
+    
     this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
-    //console.log('MiddleComponent this.applications: '+JSON.stringify(this.applications)); 
+    if (data['data']!=undefined){
+      //this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
+      this.applications =data['data'].map(jsonApp => new ItApplication().setFromJson(jsonApp));
+    }
   }
 
   AddNewApplicationMap(application: ItApplication) {
@@ -288,7 +286,7 @@ test : boolean = true;
   nbError: number = 0;
   ShowError(error: string) {
     this.nbError++;
-    this.AddMessage('<span class="error"><b>ERROR >>> </b>' +error+'</span>');
+    this.AddMessage('<span class="error"><b>ERROR >>> </b>' + error + '</span>');
     //console.error("ERROR >>> " + error);
   }
 

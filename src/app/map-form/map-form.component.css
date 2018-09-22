@@ -1,14 +1,11 @@
 .graphHeader {
-	/*margin-left:5px;*/
+  padding-left: 5px;
 }
 
 .graphBody {
-  color: white;
-  border: 0px solid #555;
-  margin: 5px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 0px;
 }
 
+#graphContainerID {
+  background-color: rgb(66, 66, 66);
+  border: 1px solid #fff;
+}
