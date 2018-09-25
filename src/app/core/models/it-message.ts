@@ -31,9 +31,9 @@ export class ItMessage extends ItAsset {
 
   	constructor() {
   		super();
-  		this.status=ItAssetStatus.PROJECT;
   	}
   	setData(data: string): void {
+  		this.name=data;
   		this.data=data;
   	}
   	setSource(asset:ItAsset) : void{

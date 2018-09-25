@@ -1,7 +1,7 @@
 export enum ItAssetStatus {
-  PROJECT="PROD",
-  PRODUCTION="PROJ",
-  ARCHIVE="ARCH"
+  DRA="PROJET",
+  PRO="PRODUCTION",
+  ARC="ARCHIVE"
 }
 
 export class ItAsset {
@@ -15,8 +15,9 @@ export class ItAsset {
   validityStart: string;
   validityEnd: string;
 
-  constructor(){
+  constructor() {
     this.className=this.constructor.name;    
+    this.status=ItAssetStatus.DRA;
   }
 
    setFromJson(jsonData: Object) : ItAsset {
@@ -33,6 +34,9 @@ export class ItAsset {
 
   public getClassName(): string {
   	return this.constructor.name;
+  }
+  public getID() : number {
+    return this.id;
   }
 }
 

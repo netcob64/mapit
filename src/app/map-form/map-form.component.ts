@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit, ElementRef } from '@angular/core';
-import { ItMap } from '../core/models/it-map';
+import { ItMap, ItMapType } from '../core/models/it-map';
 import { ItApplication } from '../core/models/it-application';
 import { ItMessage } from '../core/models/it-message';
 import { DataService } from '../core/services/data.service';
@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MapFormDialogComponent } from './map-form-dialog.component'
+import { EnumToArrayPipe } from '../core/util'
 
 export interface DialogData {
   name: string;
@@ -29,19 +30,15 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() map: ItMap;
   @Input() searchAppStr: string = 'app';
-
-  appSelectionControl = new FormControl();
-  //availableApplications: string[] = ['One', 'Two', 'Three'];
-
-
-  filteredOptions: Observable < string[] > ;
-
+  ItMapType=ItMapType;
   error: boolean = false;
   errorMessage: string = null;
   prev: ItMap;
   isToBeSaved: boolean = false;
   graph: MxGraph;
   dialogResult: DialogData;
+  appSelectionControl = new FormControl();
+  filteredOptions: Observable < string[] > ;
 
   constructor(private dataService: DataService, private dialog: MatDialog) {
     this.dataService.SetDataType(DataServiceDataType.MAP);
@@ -53,7 +50,6 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
-
     };
 
     const dialogRef = this.dialog.open(MapFormDialogComponent, dialogConfig);
@@ -62,6 +58,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
       data => {
         if (data != undefined) {
           // Create new message
+           this.isToBeSaved = true;
           const msg : ItMessage = new ItMessage();
           msg.setData(data.description);
           msg.setSource(cell.source.value);
@@ -80,10 +77,11 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
       }
     );
   }
+
   GraphInfo(){
     console.log(this.graph.viewXML());
-
-        }
+    console.log(ItMapType);
+  }
 
   ngOnInit() {
     this.Clone();
@@ -93,6 +91,8 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
         startWith(''),
         map(value => this._filter(value))
       );
+
+   console.log('ngOnInit:', this.map);
   }
 
   private _filter(value: string): string[] {
@@ -103,8 +103,12 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   }
 
   AddApplication(evt: Event) {
+    console.log(this.appSelectionControl.value);
+if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByName(this.appSelectionControl.value)!=undefined){
+    this.isToBeSaved = true;
     this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
     this.appSelectionControl.setValue('');
+  }
   }
 
   RemoveSelectionFromMap() {
@@ -122,16 +126,19 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   }
 
   Save(): void {
+    this.map.setGraphData(this.graph.viewXML());
     this.dataService.Save(this.map).subscribe(data => this.SaveDataHandler(data));
   }
 
   SaveDataHandler(data: any): void {
     if (data ==undefined)  {
       this.error = true;
-      this.errorMessage = 'no object found';
+      this.errorMessage = 'database error';
+      this.guiCtrl.AddMessage(this.errorMessage);
     } else if (data.status != 'success') {
       this.error = true;
       this.errorMessage = data.message;
+      this.guiCtrl.AddMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.map.id != data.id;
       console.log('MapFormComponent::SaveDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
@@ -151,9 +158,8 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   ngAfterViewInit() {
     const mapform: MapFormComponent = this;
     this.graph = new MxGraph(this.graphContainerRef.nativeElement);
-    /*this.graph.registerBeforeAddVertexHandler(function(sender, evt) {
-      console.log('BEFORE_ADD_VERTEX:');
-    });*/
+   console.log('ngAfterViewInit:', this.map);
+   
 
     this.graph.registerAddCellHandler(function(sender, evt) {
       console.log('CELLS_ADDED:');

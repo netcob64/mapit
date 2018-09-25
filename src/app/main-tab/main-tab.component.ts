@@ -1,7 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 import { TabContentType } from '../core/models/tab-content-type';
-import { EscapeHtmlPipe } from '../core/util';
 import { MatTabsModule, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 
 @Component({
@@ -11,6 +10,7 @@ import { MatTabsModule, MatTabChangeEvent, MatTabGroup } from '@angular/material
 })
 
 export class MainTabComponent {
+	// important to be able to use in html 'as let option of (TabContentType|enumToArray)''
 	TabContentType = TabContentType;
 	@ViewChild('tabGroup') tabGroup : MatTabGroup;
 	@Input() guiCtrl: GuiCtrlComponent;

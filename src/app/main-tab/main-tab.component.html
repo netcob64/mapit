@@ -1,7 +1,6 @@
 <mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)" [selectedIndex]="guiCtrl.activeTabIndex">
   <mat-tab *ngFor="let tab of guiCtrl.tabs">
-   
-    <ng-template mat-tab-label >
+    <ng-template mat-tab-label>
       {{ tab.label }}
       <!--<button mat-icon-button (click)="close(tab.id, $event)"> TEST passing html elt from $event -->
       <button mat-icon-button (click)="guiCtrl.DeleteTabContent(tab);">

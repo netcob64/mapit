@@ -1,10 +1,9 @@
 <div class="graphHeader">
   <mat-form-field appearance="outline" style="margin-bottom: -20px">
-    <mat-label><mat-icon>search</mat-icon><i>Application...</i></mat-label>
-    <!--<span style="margin-left: 5px;margin-right: 5px;">App:</span>-->
+    <mat-label>
+      <mat-icon>search</mat-icon><i>Application...</i></mat-label>
     <input type="text" matInput [formControl]="appSelectionControl" [matAutocomplete]="auto" placeholder="">
   </mat-form-field>
-
   <mat-autocomplete autoActiveFirstOption="false" #auto="matAutocomplete">
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option}}
@@ -25,6 +24,17 @@
   <button mat-icon-button (click)="Save()">
     <mat-icon>save</mat-icon>
   </button>
+  <mat-form-field>
+    <mat-select [(ngModel)]="map.type" placeholder="Type">
+      <mat-option *ngFor="let option of (ItMapType | enumToArray)" [value]="option"> {{ItMapType[option]}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field style="margin-bottom: -20px">
+    <mat-label>Map name</mat-label>
+    <input type="text" matInput [(ngModel)]="map.name" placeholder="Name">
+  </mat-form-field>
+  <span class="info" *ngIf="isToBeSaved"> (not saved)</span>
 </div>
 <div class="graphBody">
   <!--Map name:&nbsp;{{map.name}}<br>-->
@@ -32,3 +42,9 @@
   <!-- style="position:relative; REQUIRED for mxGRAPH selection box and shape text edition -->
   <div #graphContainer id="graphContainerID" style="position:relative;"></div>
 </div>
+<mat-error *ngIf="error">
+  {{errorMessage}}
+</mat-error>
+<mat-error >
+  {{errorMessage}}
+</mat-error>

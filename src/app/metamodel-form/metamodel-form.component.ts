@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { ItAssetStatus } from '../core/models/it-asset';
 import { ItMetamodel } from '../core/models/it-metamodel';
 import { ItMetamodelAttribute, ItMetamodelAttributeType } from '../core/models/it-metamodel-attribute';
 import { ItMetamodelRelation } from '../core/models/it-metamodel-relation';
@@ -20,7 +21,8 @@ export class MetamodelFormComponent implements AfterViewChecked, AfterViewInit {
   errorMessage : string = null;
   prev: ItMetamodel;
   isToBeSaved: boolean ;
-  ItMetamodelAttributeType = ItMetamodelAttributeType;
+  ItMetamodelAttributeTypeEnum = ItMetamodelAttributeType;
+  ItAssetStatusEnum=ItAssetStatus;
 
 
   constructor(private dataService: DataService) {
@@ -50,6 +52,7 @@ export class MetamodelFormComponent implements AfterViewChecked, AfterViewInit {
   DeleteRelation(rel:ItMetamodelRelation){
     this.model.relations = this.model.relations.filter(r => r !== rel);
   }
+
   Save(): void {
     this.dataService.Save(this.model).subscribe(data => this.SaveMetamodelDataHandler(data));
     
@@ -62,10 +65,12 @@ export class MetamodelFormComponent implements AfterViewChecked, AfterViewInit {
   SaveMetamodelDataHandler(data: any): void {
     if (data == undefined) { 
       this.error = true;
-      this.errorMessage = 'no object found';
+      this.errorMessage = 'database error';
+      this.guiCtrl.AddMessage(this.errorMessage);
     } else if (data.status != 'success') {
       this.error = true;
       this.errorMessage = data.message;
+      this.guiCtrl.AddMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.model.id != data.id;
       this.guiCtrl.AddMessage('MetamodelFormComponent::SaveMetamodelDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);

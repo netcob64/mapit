@@ -3,32 +3,29 @@
   <table>
     <tr>
       <td>
-        <label>ID:&nbsp;</label> 
-      </td>
-      <td>#{{model.id}}</td>
-    </tr>
-    <tr>
-      <td>
-        <mat-form-field>
-          <input matInput [(ngModel)]="model.name" placeholder="Data type">
+         <mat-form-field>
+          <input matInput value="#{{model.id}}" placeholder="Data type" disabled>
         </mat-form-field>
       </td>
-      <td>
-        <mat-form-field>
-          <input matInput [(ngModel)]="model.label" placeholder="Label">
-        </mat-form-field>
-      </td>
-      <td>
+       <td>
         <mat-form-field>
           <input matInput [(ngModel)]="model.version" placeholder="Verion" disabled>
         </mat-form-field>
       </td>
+    </tr>
+    <tr>
+      <td>
+        <mat-form-field>
+          <input matInput [(ngModel)]="model.name" placeholder="Data type name">
+        </mat-form-field>
+      </td>
+
+     
       <td>
         <mat-form-field>
           <mat-select [(ngModel)]="model.status" placeholder="Statut">
             <!--<mat-option value=""></mat-option>-->
-            <mat-option value="DRAFT">Brouillon</mat-option>
-            <mat-option value="ACTIVE">Actif</mat-option>
+             <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
           </mat-select>
         </mat-form-field>
       </td>
@@ -95,17 +92,13 @@
           <td>
             <mat-form-field>
               <mat-select [(ngModel)]="attr.type">
-                <mat-option value="TXT">Texte</mat-option>
-                <mat-option value="NUM">Nombre</mat-option>
-                <mat-option value="LIST">Liste</mat-option>
-                <mat-option value="BOOL">Booleen</mat-option>
-                <mat-option value="DATE">Date</mat-option>
-                <mat-option value="TIME">Time</mat-option>
+                 <mat-option *ngFor="let option of (ItMetamodelAttributeTypeEnum | enumToArray)" [value]="option"> {{ItMetamodelAttributeTypeEnum[option]}}</mat-option>
+             
               </mat-select>
             </mat-form-field>
           </td>
           <td>
-            <mat-form-field *ngIf="attr.type == ItObjectAttributeType.LIST">
+            <mat-form-field *ngIf="attr.type == ItMetamodelAttributeTypeEnum.LIST">
               <input matInput [(ngModel)]="attr.values" [disabled]="attr.valSystem == true">
             </mat-form-field>
           </td>
@@ -129,7 +122,7 @@
         <th>Name</th>
         <th>Entity</th>
         <th>Label</th>
-        <th>?</th>
+        <th>Cardinality</th>
       </tr>
       <tr class="tabLine" *ngFor="let rel of model.relations">
         <ng-container *ngIf="!rel.isSystem">
@@ -143,22 +136,20 @@
               <input matInput [(ngModel)]="rel.name">
             </mat-form-field>
           </td>
-
           <td>
             <mat-form-field>
               <mat-select [(ngModel)]="rel.entity">
-
-                <mat-option  *ngFor="let e of guiCtrl.metamodels" [value]="e.id">{{e.label}}</mat-option>
-         
+                <mat-option  *ngFor="let e of guiCtrl.metamodels" [value]="e.id">{{e.label}}</mat-option>         
               </mat-select>
             </mat-form-field>
-          </td>          <td>
+          </td>          
+          <td>
             <mat-form-field>
               <input matInput [(ngModel)]="rel.label">
             </mat-form-field>
           </td>
           <td>
-            <mat-form-field *ngIf="rel.type == ItObjectAttributeType.LIST">
+            <mat-form-field>
               <input matInput [(ngModel)]="rel.values" [disabled]="rel.valSystem == true">
             </mat-form-field>
           </td>

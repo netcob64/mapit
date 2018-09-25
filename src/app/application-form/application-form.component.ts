@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
-import { ItApplication } from '../core/models/it-application';
+import { ItAssetStatus } from '../core/models/it-asset';
+import { ItApplication, ItApplicationType } from '../core/models/it-application';
 import { DataService } from '../core/services/data.service';
 import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
@@ -13,6 +14,9 @@ export class ApplicationFormComponent implements AfterViewChecked, AfterViewInit
 
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() application: ItApplication;
+  ItApplicationTypeEnum=ItApplicationType;
+  ItAssetStatusEnum=ItAssetStatus;
+
   error : boolean = false;
   errorMessage : string = null;
   prev: ItApplication;
@@ -35,9 +39,15 @@ export class ApplicationFormComponent implements AfterViewChecked, AfterViewInit
   }
 
   SaveDataHandler(data: any): void {
-    if (data==undefined || data.status != 'success'){
+    if (data==undefined){
+      this.error = true;
+      this.errorMessage = 'database error';
+      this.guiCtrl.AddMessage(this.errorMessage);
+    }
+    else if (data.status != 'success'){
       this.error = true;
       this.errorMessage = data.message;
+      this.guiCtrl.AddMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.application.id != data.id;
       console.log('ApplicationFormComponent::SaveApplicationDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);

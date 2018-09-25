@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { MainTabComponent } from './main-tab/main-tab.component';
 import { HeaderComponent } from './header/header.component';
@@ -54,7 +54,9 @@ import { GuiCtrlComponent} from './gui-ctrl-component';
 // components
 import { HttpClientModule }    from '@angular/common/http';
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { EscapeHtmlPipe } from './core/util';
+import { EscapeHtmlPipe, EnumToArrayPipe } from './core/util';
+
+
 
 @NgModule({
   declarations: [
@@ -68,7 +70,7 @@ import { EscapeHtmlPipe } from './core/util';
     ApplicationListComponent,
     LoginFormComponent,
     NotFoundComponent,
-    EscapeHtmlPipe,
+    EscapeHtmlPipe, EnumToArrayPipe,
     MetamodelFormComponent,
     MetamodelListComponent,
     MapFormComponent,

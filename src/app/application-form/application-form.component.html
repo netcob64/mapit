@@ -3,9 +3,15 @@
   <table>
     <tr>
       <td>
-        <label>ID</label>
+        <mat-form-field>
+         <input matInput  placeholder="ID" disabled value="#{{application.id}}">
+        </mat-form-field>      
       </td>
-      <td>#{{application.id}}</td>
+      <td>  
+        <mat-form-field>
+          <input matInput value="{{application.version}}" placeholder="Verion" disabled>
+        </mat-form-field>
+      </td>
     </tr>
     <tr>
       <td>
@@ -16,9 +22,8 @@
       <td colspan="2">
         <mat-form-field>
            <mat-select [(ngModel)]="application.type" placeholder="Type">
-            <mat-option value=""></mat-option>
-            <mat-option value="PRO">Progiciel</mat-option>
-            <mat-option value="SPEC">Développement spécifique</mat-option>
+             <mat-option value=""></mat-option>
+           <mat-option *ngFor="let option of (ItApplicationTypeEnum | enumToArray)" [value]="option"> {{ItApplicationTypeEnum[option]}}</mat-option>
           </mat-select>
         </mat-form-field>
       </td>
@@ -28,9 +33,7 @@
         <mat-form-field>
           <mat-select [(ngModel)]="application.status" placeholder="Statut">
             <mat-option value=""></mat-option>
-            <mat-option value="PROD">En Production</mat-option>
-            <mat-option value="PROJ">En Projet</mat-option>
-            <mat-option value="ARCH">Archive</mat-option>
+           <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
           </mat-select>
         </mat-form-field>
       </td>

@@ -24,7 +24,9 @@ export class GuiCtrlComponent {
   @Input() app: AppComponent;
 
   test: boolean = true;
-
+  getKeys(data) {
+ return Object.keys(data);
+}
   constructor(private dataService: DataService) {
     dataService.guiCtrl = this;
     var newTab: TabContent = {
@@ -34,14 +36,17 @@ export class GuiCtrlComponent {
         name: 'Welcome',
         html: `<h1>Welcome</h1>
       <h3>TODO</h3>
-      <ul>
-        <li>mxGraph Management base sur les evt CELLS_ADDED...</li>
-        <li>Bug affichage quand Zoom Chrom actif....</li>
-        <li>Geston de l'objet meta model...: <b>revoir l'IHM des gestion des attr system</b></li>
-        <li>Angular Material Tree component pour list des app?</li>
+      <ul>        
+      <li><b>Map:</b> chargement depuis BDD</li>
+        <li><b>Map:</b>Parametrage de la visu des graph en fonction de la date</li>
+        <li><b>Map:</b>Bug affichage mxGrpah quand Zoom Chrome actif....</li>
+        <li><b>Map:</b>Bouton Zoom</li>
+        <li><b>Map:</b>Print, Print setup, Preview</li>
+        <li>Gestion de l'objet meta model...: <b>revoir l'IHM de gestion des attr system</b></li>
+        <li>Angular Material Tree component pour list des app?</li>        
+        <li>Gestion des versions des objets et acces concurrents</li>
+        <li>Gestion "not saved" pour app, graph, metamodel...
         <li>Authentification</li>
-        <li>Gestion des version des objet</li>
-        <li>Parametrage de la visu des graph en fonction de la date</li>
       </ul>
     </div>`
       }
@@ -116,31 +121,7 @@ export class GuiCtrlComponent {
       this.metamodels =data['data'].map(jsonApp => new ItMetamodel().setFromJson(jsonApp));
     }
   }
-  //-------------------------
-  // Login management
-  //-------------------------
-  first: boolean = true;
-
-  Login(login: string, password: string): boolean {
-    this.first = false;
-    console.log('First: ' + this.first);
-    console.log('Login: ' + login);
-    console.log('Password: ' + password);
-    if (login == "cob" && password == "cob") {
-      this.app.logged = true;
-      sessionStorage.setItem('access_token', 'fddf');
-    } else {
-      this.app.logged = false;
-
-    }
-    return this.app.logged;
-  }
-
-  Logout(): void {
-    sessionStorage.removeItem('auth_token');
-    this.app.logged = false;
-    this.first = true;
-  }
+  
   //-------------------------
   // Tabs management
   //-------------------------
@@ -216,7 +197,7 @@ export class GuiCtrlComponent {
   // ItMap management
   //-------------------------
 
-  maps: ItMap[];
+  maps: ItMap[]=[];
   MapSaved(map: ItMap, isNew: boolean) {
     if (isNew) {
       this.maps = this.maps.concat(map);
@@ -287,7 +268,7 @@ export class GuiCtrlComponent {
   ShowError(error: string) {
     this.nbError++;
     this.AddMessage('<span class="error"><b>ERROR >>> </b>' + error + '</span>');
-    //console.error("ERROR >>> " + error);
+    console.error("ERROR >>> " + error);
   }
 
   footerMessage: string = "";
@@ -295,7 +276,7 @@ export class GuiCtrlComponent {
   AddMessage(msg: string): void {
     var s: string = this.footerMessage.substring(0, 10000);
     this.footerMessage = '<p>' + msg + '</p>' + s;
-
+    //console.log(msg);
   }
 
   ClearMessage(): void {
@@ -308,5 +289,30 @@ export class GuiCtrlComponent {
   DebugShowHide(): boolean {
     this.debugIsVisible = !this.debugIsVisible;
     return this.debugIsVisible;
+  }
+  //-------------------------
+  // Login management
+  //-------------------------
+  first: boolean = true;
+
+  Login(login: string, password: string): boolean {
+    this.first = false;
+    console.log('First: ' + this.first);
+    console.log('Login: ' + login);
+    console.log('Password: ' + password);
+    if (login == "cob" && password == "cob") {
+      this.app.logged = true;
+      sessionStorage.setItem('access_token', 'fddf');
+    } else {
+      this.app.logged = false;
+
+    }
+    return this.app.logged;
+  }
+
+  Logout(): void {
+    sessionStorage.removeItem('auth_token');
+    this.app.logged = false;
+    this.first = true;
   }
 }
