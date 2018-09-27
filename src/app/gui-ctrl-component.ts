@@ -10,8 +10,22 @@ import { DataServiceDataType } from './core/services/data.service.data.type';
 
 class TabContent {
   type: TabContentType;
-  content: any;
-  label: string
+  content: ItAsset|any;
+  constructor(type: TabContentType, content : ItAsset|any) {
+    this.type=type;
+    this.content=content;
+  }
+  getLabel(): string {
+    if (this.content instanceof ItApplication) {
+      return 'app: '+this.content.name;
+    } else if (this.content instanceof ItMetamodel) {
+      return 'class: '+this.content.name;
+    } else if (this.content instanceof ItMap) {
+      return 'map['+this.content.type+']: '+this.content.name+' ('+this.content.getAsset().name+')';
+    } else {
+      return this.content.name;
+    }
+  }
 }
 
 @Component({
@@ -29,10 +43,8 @@ export class GuiCtrlComponent {
 }
   constructor(private dataService: DataService) {
     dataService.guiCtrl = this;
-    var newTab: TabContent = {
-      type: TabContentType.TXT,
-      label: 'Welcome',
-      content: {
+    var newTab: TabContent = new TabContent(TabContentType.TXT,
+       {
         name: 'Welcome',
         html: `<h1>Welcome</h1>
       <h3>TODO</h3>
@@ -49,8 +61,8 @@ export class GuiCtrlComponent {
         <li>Authentification</li>
       </ul>
     </div>`
-      }
-    };
+      });
+    
     this.AddTabContent(newTab);
     //this.ShowError('coucou');
   }
@@ -138,12 +150,8 @@ export class GuiCtrlComponent {
     } else {
       app = appref;
     }
-    var newTab: TabContent = {
-      type: TabContentType.APP,
-      content: app,
-      label: app.name
-    };
-    this.AddTabContent(newTab);
+
+    this.AddTabContent(new TabContent( TabContentType.APP,   app));
   }
 
   private AddMapTab(app: ItApplication, mapref: string | ItMap): void {
@@ -155,12 +163,8 @@ export class GuiCtrlComponent {
     } else {
       map = mapref;
     }
-    var newTab: TabContent = {
-      type: TabContentType.MAP,
-      content: map,
-      label: app.name + ' : ' + map.type + ': ' + map.name
-    };
-    this.AddTabContent(newTab);
+    
+    this.AddTabContent(new TabContent(TabContentType.MAP, map));
   }
 
   private AddMetamodelTab(objClass: string | ItMetamodel): void {
@@ -172,14 +176,8 @@ export class GuiCtrlComponent {
     } else {
       obj = objClass;
     }
-    //console.log(JSON.stringify(obj));
 
-    var newTab: TabContent = {
-      type: TabContentType.META_MODEL,
-      content: obj,
-      label: obj.name
-    };
-    this.AddTabContent(newTab);
+    this.AddTabContent(new TabContent(TabContentType.META_MODEL, obj));
   }
 
   private AddTabContent(tabContent: TabContent): void {
