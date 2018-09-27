@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
 import { TabContentType } from '../core/models/tab-content-type';
 import { MatTabsModule, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
@@ -6,7 +6,8 @@ import { MatTabsModule, MatTabChangeEvent, MatTabGroup } from '@angular/material
 @Component({
 	selector: 'app-main-tab',
 	templateUrl: './main-tab.component.html',
-	styleUrls: ['./main-tab.component.css']
+	styleUrls: ['./main-tab.component.css'],
+	encapsulation: ViewEncapsulation.None, // in order to override css (.mat-tab-body, .mat-tab-body-wrapper)
 })
 
 export class MainTabComponent {

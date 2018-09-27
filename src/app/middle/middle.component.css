@@ -9,3 +9,6 @@ app-footer {
   z-index: 4;
   width:100%;
 }
+app-main-tab {
+	height: 100%;
+}

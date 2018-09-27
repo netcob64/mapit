@@ -1,8 +1,21 @@
 .tab-content {
- 
   color: #eee;
   font-weight: normal;
   font-size: 14px;
+  height: 100%;
+
+}
+mat-tab-group {
+	height: 100%;
+	display: flex;
+}
+.mat-tab-body, .mat-tab-body-wrapper {
+	height: 100%;
+	display: flex;
+}
+app-map-form {
+	height: 100%;
+	
 }
 
 
