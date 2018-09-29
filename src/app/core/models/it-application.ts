@@ -9,15 +9,29 @@ export enum ItApplicationType {
 
 export class ItApplication extends ItAsset {
 	private outMessages: ItMessage[];
+	private inMessages: ItMessage[];
+
 	constructor() {
 		super();
 		this.status=ItAssetStatus.DRA;
 
         //console.log('ItApplications.constructor ', this);
 	}
-	public addMessage(message: ItMessage): void {
-		this.outMessages.concat(message);
+	public addMessage(message: ItMessage, isInMessage: boolean = false): void {
+		if (isInMessage){
+			this.inMessages.concat(message);
+		} else {
+			this.outMessages.concat(message);
+		}
 	}
+
+    public clone(asset: ItApplication)  {
+  		var dataObject = Object.assign({}, asset);
+        for (var prop in dataObject){
+        	this[prop]=dataObject[prop];
+        }
+ 	}
+  
 }
 
 

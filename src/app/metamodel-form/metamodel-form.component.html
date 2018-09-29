@@ -1,5 +1,5 @@
 <div class="theForm">
-  <h2>Meta Class : {{ model.name | uppercase }}<span class="info" *ngIf="isToBeSaved"> (not saved)</span></h2>
+  <h2>Meta Class : {{ model.name | uppercase }} <span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
   <table>
     <tr>
       <td>
@@ -18,9 +18,7 @@
         <mat-form-field>
           <input matInput [(ngModel)]="model.name" placeholder="Data type name">
         </mat-form-field>
-      </td>
-
-     
+      </td>     
       <td>
         <mat-form-field>
           <mat-select [(ngModel)]="model.status" placeholder="Statut">
@@ -161,6 +159,6 @@
     {{errorMessage}}
   </mat-error>
   <br>
-  <button mat-raised-button (click)="Save();">Save</button>
+  <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
   <button *ngIf="error" mat-raised-button color="warn" (click)="Reload();">Reload</button>
 </div>

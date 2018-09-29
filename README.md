@@ -21,7 +21,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ### Angular Material
 `$ npm install --save @angular/material @angular/cdk`
 
-`$ npm install --save @angular/animations`s
+`$ npm install --save @angular/animations`
 
 ### mxGraph - graph drawing SVG
 `$ npm install --save mxgraph`

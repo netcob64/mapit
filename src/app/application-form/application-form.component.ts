@@ -1,41 +1,51 @@
-import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ItAssetStatus } from '../core/models/it-asset';
 import { ItApplication, ItApplicationType } from '../core/models/it-application';
 import { DataService } from '../core/services/data.service';
 import { DataServiceDataType } from '../core/services/data.service.data.type';
 import { GuiCtrlComponent } from '../gui-ctrl-component';
+import { inspect } from 'util';
 
 @Component({
   selector: 'app-application-form',
   templateUrl: './application-form.component.html',
   styleUrls: ['./application-form.component.css']
 })
-export class ApplicationFormComponent implements AfterViewChecked, AfterViewInit {
+export class ApplicationFormComponent {
 
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() application: ItApplication;
+
+ 
   ItApplicationTypeEnum=ItApplicationType;
   ItAssetStatusEnum=ItAssetStatus;
 
   error : boolean = false;
   errorMessage : string = null;
   prev: ItApplication;
-  isToBeSaved: boolean = false;
+ 
 
   constructor(private dataService: DataService) { 
     this.dataService.SetDataType(DataServiceDataType.APPLICATION);
+    this.prev=new ItApplication();
   }
 
   ngOnInit() {
-    this.Clone();
+    this.prev.clone(this.application);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('CHANGE: ' + JSON.stringify(changes.application));
+  CheckToBeSaved() : boolean {
+     if (this.NotEqual(this.application , this.prev) || this.application.id == null) {
+      return true; 
+    } else {
+      return false; 
+    }
   }
 
   Save(): void {
+    if (this.CheckToBeSaved()) {
     this.dataService.Save(this.application).subscribe(data => this.SaveDataHandler(data));
+    }
   }
 
   SaveDataHandler(data: any): void {
@@ -53,35 +63,15 @@ export class ApplicationFormComponent implements AfterViewChecked, AfterViewInit
       console.log('ApplicationFormComponent::SaveApplicationDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
       this.error = false;
       this.application.id = data.id;
-      this.guiCtrl.ApplicationSaved(this.application, newObj);
-      this.Clone();
+      //this.guiCtrl.ApplicationSaved(this.application, newObj); 
+      this.guiCtrl.ItAssetSaved(this.application  , this.prev);    
+      this.prev.clone(this.application);
     }
   }
 
-  Clone(): void {
-    this.isToBeSaved = false;
-    this.prev = Object.assign({}, this.application);
-  }
-  ngAfterViewInit() {
-    // viewChild is set after the view has been initialized
-    //console.log('AfterViewInit');
-
-  }
-
-  ngAfterViewChecked() {
-    //console.log('ngAfterViewChecked');
-    //console.log('app: ' + JSON.stringify(this.application));
-
-    //console.log('prev: ' + JSON.stringify(this.prev));
-    if (this.NotEqual(this.application , this.prev) || this.application.id == null) {
-      this.isToBeSaved = true; 
-    } else {
-      this.isToBeSaved = false; 
-    }
-  }
   NotEqual(o1, o2): boolean {
     var equal : boolean;
-    equal = JSON.stringify(o1).localeCompare(JSON.stringify(o2)) == 0;
+    equal = inspect(o1).localeCompare(inspect(o2)) == 0;
     return !equal;
   }
 }

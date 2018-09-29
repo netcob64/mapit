@@ -11,7 +11,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 
 export class ApplicationListComponent implements OnInit {
 	@Input() guiCtrl: GuiCtrlComponent;
-	
+	//@ViewChild(MatMenuTrigger) menu: MatMenuTrigger;
 	constructor() {}
 
 	ngOnInit() {}
@@ -33,7 +33,7 @@ export class ApplicationListComponent implements OnInit {
 		//event.stopPropagation();
 		
     }	
-	@ViewChild(MatMenuTrigger) menu: MatMenuTrigger;
+	
 
 	stopEventPropagation(event: Event) {
 		event.stopPropagation();

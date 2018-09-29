@@ -7,53 +7,79 @@ import { TabContentType } from './core/models/tab-content-type';
 import { ItMetamodel } from './core/models/it-metamodel';
 import { DataService } from './core/services/data.service';
 import { DataServiceDataType } from './core/services/data.service.data.type';
+import { GraphObjectFactory } from './core/mxgraph/mx.graph';
+import { inspect } from 'util';
 
 class TabContent {
   type: TabContentType;
-  content: ItAsset|any;
-  constructor(type: TabContentType, content : ItAsset|any) {
-    this.type=type;
-    this.content=content;
+  content: ItAsset | any;
+  constructor(type: TabContentType, content: ItAsset | any) {
+    this.type = type;
+    this.content = content;
   }
   getLabel(): string {
     if (this.content instanceof ItApplication) {
-      return 'app: '+this.content.name;
+      return 'app: ' + this.content.name;
     } else if (this.content instanceof ItMetamodel) {
-      return 'class: '+this.content.name;
+      return 'class: ' + this.content.name;
     } else if (this.content instanceof ItMap) {
-      return 'map['+this.content.type+']: '+this.content.name+' ('+this.content.getAsset().name+')';
+      return 'map[' + this.content.type + ']: ' + this.content.name + ' (' + this.content.getAsset().name + ')';
     } else {
       return this.content.name;
     }
   }
 }
 
-@Component({
-  selector: 'gui-ctrl',
-  template: ``
-})
 
-export class GuiCtrlComponent {
+
+
+@Component({ selector: 'gui-ctrl', template: `` })
+export class GuiCtrlComponent implements GraphObjectFactory {
   me: GuiCtrlComponent = this;
   @Input() app: AppComponent;
-
+  objectClassIndex: Map < string,
+  Map < string,
+  ItAsset >> ;
+  //metamodels: ItMetamodel[];
+  applications: ItApplication[];
+  maps: ItMap[];
+  metamodels(): Map < string,  ItAsset > { return this.objectClassIndex.get(this.IT_METAMODEL_CLASS_NAME); }
   test: boolean = true;
-  getKeys(data) {
- return Object.keys(data);
-}
+
+  /* TODO from Database */
+  public IT_METAMODEL_CLASS_NAME: string = (new ItMetamodel()).getClassName();
+  public IT_APPLICATION_CLASS_NAME: string = (new ItApplication()).getClassName();
+  public IT_MAP_CLASS_NAME: string = (new ItMap()).getClassName();
+
   constructor(private dataService: DataService) {
+    this.objectClassIndex = new Map();
+    //this.metamodels = [];    
+    this.applications = [];
+    this.maps = [];
+    this.objectClassIndex.set(this.IT_APPLICATION_CLASS_NAME, new Map());
+    this.objectClassIndex.set(this.IT_METAMODEL_CLASS_NAME, new Map());
+    this.objectClassIndex.set(this.IT_MAP_CLASS_NAME, new Map());
+
     dataService.guiCtrl = this;
-    var newTab: TabContent = new TabContent(TabContentType.TXT,
-       {
-        name: 'Welcome',
-        html: `<h1>Welcome</h1>
+
+    var newTab: TabContent = new TabContent(TabContentType.TXT, {
+      name: 'Welcome',
+      html: `<h1>Welcome</h1>
       <h3>TODO</h3>
+      <h2>
+        <ul>        
+          <li>Passer ItApplication en generique comme Metamodel dans guiCtrl, applicaiton-list etc..</li>
+          <li>permet de factoriser le code de guiCtrl..</li>
+          <li>Finir la genericite mxgraph : GraphObject etc pour avoir des label et les editer sur tout type d'objet...</li>
+        </ul>
+      </h2>
       <ul>        
-      <li><b>Map:</b> chargement depuis BDD</li>
+        <li><b>Map:</b> chargement depuis BDD</li>
         <li><b>Map:</b>Parametrage de la visu des graph en fonction de la date</li>
         <li><b>Map:</b>Bug affichage mxGrpah quand Zoom Chrome actif....</li>
         <li><b>Map:</b>Bouton Zoom</li>
         <li><b>Map:</b>Print, Print setup, Preview</li>
+        <li>if an asset edition tab already exist don't create a new one...</li>
         <li>Gestion de l'objet meta model...: <b>revoir l'IHM de gestion des attr system</b></li>
         <li>Angular Material Tree component pour list des app?</li>        
         <li>Gestion des versions des objets et acces concurrents</li>
@@ -61,141 +87,131 @@ export class GuiCtrlComponent {
         <li>Authentification</li>
       </ul>
     </div>`
-      });
-    
+    });
+
     this.AddTabContent(newTab);
     //this.ShowError('coucou');
   }
 
-  GetApplicationByName(appName): ItApplication {
-    return this.applications.find(function(app) { return app.name == appName; });
+  GetLabelFor(className: string, id: number): string {
+    return "guiCtrl.GetLabelFor - BUG TBD"; //this.objectClassIndex.get(className).objectIdIndex[id].getName();
   }
-  GetApplicationTitle(): string {
-    return this.app.title;
+  /*GetApplicationByName(appName): ItApplication {
+    return this.applications.find(function(app) { return app.name == appName; });
+  }*/
+
+  GetAssetByName(className: string, name: string): ItAsset {
+    return this.objectClassIndex[className].find(function(asset) { return asset.name == name; });
+  }
+  GetItAssetNameIndex(className: string) : Map<string, ItAsset> {
+    return this.objectClassIndex.get(className);
+  }  
+  GetItMetamodels() {
+    return this.GetItAssets(this.IT_METAMODEL_CLASS_NAME);
   }
 
-  //-------------------------
-  // SideNav contrrol
-  //-------------------------
-  sidenavIsOpen: boolean = true;
-  SidenavShowHide() {
-    this.sidenavIsOpen = !this.sidenavIsOpen;
+  GetItAssets(className: string) : Array<ItAsset> {
+    if (this.objectClassIndex.has(className)){
+    return Array.from(this.objectClassIndex.get(className).values());
+  } else {
+    return [];
   }
-  IsSidenavIsOpen(): boolean {
-    return this.sidenavIsOpen;
   }
+  GetApplicationTitle(): string {
+      return this.app.title;
+    }
 
   //-------------------------
   // Meta model management
   //-------------------------
-  metamodels: ItMetamodel[];
+
   AddNewMetamodel() {
-    this.AddMetamodelTab('NEW META MODEL');
+    this.AddItAssetTab('NEW META MODEL', ItMetamodel);
   }
 
-  EditMetamodel(model: ItMetamodel) {
-    console.log(JSON.stringify(model));
-    this.AddMetamodelTab(model);
+  private tabContentTypeForClass = {
+    "ItApplication": TabContentType.APP,
+    "ItMetamodel": TabContentType.META_MODEL,
+    "ItMap": TabContentType.MAP,
   }
 
-  MetamodelSaved(model: ItMetamodel, isNew: boolean) {
-    if (isNew) {
-      this.metamodels = this.metamodels.concat(model);
+  /**
+  * Add a Tab for an ItAsset edition
+  * obj: string | ItAsset,   string for creation of a new ItAsset defined by its class (param: objClass)
+  *                          or an instance of ItAsset
+  * objClass ? : any         class of the object to be created
+  */
+  private AddItAssetTab(obj: string | ItAsset, objClass ? : any): void {
+    var object: ItAsset;
+
+    if (typeof obj == 'string') {
+      object = new objClass();
+      object.setName(obj);
     } else {
-      this.metamodels = this.metamodels.filter(a => a !== model).concat(model);
+      object = obj;
     }
+
+    this.AddTabContent(new TabContent(this.tabContentTypeForClass[object.getClassName()], object));
   }
 
-  DeleteMetamodel(model: ItMetamodel) {
-    console.log("Delete model id=" + model.id + ", name=" + model.name);
-    this.dataService.SetDataType(DataServiceDataType.META_MODEL);
-    this.dataService.Delete(model).subscribe(data => this.DeleteMetamodelDataHandler(data));
+  EditItAsset(asset: ItAsset) {
+    //console.log('EditMetamodel() - ', inspect(asset));
+    this.AddItAssetTab(asset);
   }
 
-  DeleteMetamodelDataHandler(data: any): void {
-    if (data.status == 'success') {
-      this.metamodels = this.metamodels.filter(a => a.id !== data.id);
-    } else {
+  ItAssetSaved(newAsset: ItAsset, oldAsset: ItAsset) {
+    //console.log('ItAssetSaved => asset ',inspect(asset));
+    console.log('ItAssetSaved => asset ', newAsset.getName(), oldAsset.getName());
+    if (this.objectClassIndex.get(newAsset.getClassName()).has(oldAsset.getName())) {
+      this.objectClassIndex.get(newAsset.getClassName()).delete(oldAsset.getName());
+    }
+    this.objectClassIndex.get(newAsset.getClassName()).set(newAsset.getName(), newAsset);
+  }
+
+  private dataServiceTypeForClass = {
+    "ItApplication": DataServiceDataType.APPLICATION,
+    "ItMetamodel": DataServiceDataType.META_MODEL,
+    "ItMap": DataServiceDataType.MAP,
+  }
+
+  DeleteItAsset(asset: ItAsset) {
+    console.log("Delete model id=" + asset.getId() + ", name=" + asset.getName());
+    this.dataService.SetDataType(this.dataServiceTypeForClass[asset.getClassName()]);
+    this.dataService.Delete(asset).subscribe(data => this.DeleteItAssetDataHandler(data, asset));
+  }
+
+  DeleteItAssetDataHandler(data: any, asset: ItAsset): void {
+    if (data != undefined && data.status == 'success') {
+      //this.metamodels = this.metamodels.filter(a => a.id !== data.id);
+      this.objectClassIndex.get(asset.getClassName()).delete(asset.getName());
+    } else if (data != undefined) {
       this.ShowError(data.message);
+    } else {
+      this.ShowError('Error: DB issue, trying to delete ' + asset.getClassName() + ' '+ asset.getName());
     }
   }
 
-  GetMetamodels(): void {
-    // transform Observable<ItApplication[]> to ItApplication[]
-    this.dataService.SetDataType(DataServiceDataType.META_MODEL);
-    this.dataService.Get().subscribe(data => this.GetMetamodelsDataHandler(data));
-  }
-
-  GetMetamodelsDataHandler(data: any): void {
-    this.AddMessage('GetMetamodelsDataHandler: ' + JSON.stringify(data));
-   
-     if (data['data']!=undefined){
-      this.metamodels =data['data'].map(jsonApp => new ItMetamodel().setFromJson(jsonApp));
-    }
+  LoadItAssets(assetClass: any) : void {
+    this.dataService.SetDataType(this.dataServiceTypeForClass[(new assetClass()).getClassName()]);
+    this.dataService.Get().subscribe(data => this.LoadItAssetsDataHandler(data, assetClass));
   }
   
-  //-------------------------
-  // Tabs management
-  //-------------------------
-  tabs: TabContent[] = [];
-  activeTab: TabContent;
-  activeTabIndex: number = 0;
-
-  private AddApplicationTab(appref: string | ItApplication): void {
-    var app: ItApplication;
-
-    if (typeof appref == 'string') {
-      app = new ItApplication();
-      app.name = appref;
+  LoadItAssetsDataHandler(data: any, assetClass: any): void {
+    var asset:ItAsset= new assetClass();
+    this.AddMessage('LoadItAssetsDataHandler(): asset class = ' + asset.getClassName()+ ' - data : ' + inspect(data));
+    if (data['data'] != undefined) {
+      data['data'].forEach(jsonData => this.objectClassIndex.get(asset.getClassName()).set(jsonData.name, (new assetClass()).setFromJson(jsonData)));
+      console.log('LoadItAssetsDataHandler() - '+asset.getClassName()+'(s) loaded!');
     } else {
-      app = appref;
+      this.ShowError('Error: DB issue, trying to get metamodels');
     }
-
-    this.AddTabContent(new TabContent( TabContentType.APP,   app));
-  }
-
-  private AddMapTab(app: ItApplication, mapref: string | ItMap): void {
-    var map: ItMap;
-
-    if (typeof mapref == 'string') {
-      map = new ItMap(app);
-      map.name = mapref;
-    } else {
-      map = mapref;
-    }
-    
-    this.AddTabContent(new TabContent(TabContentType.MAP, map));
-  }
-
-  private AddMetamodelTab(objClass: string | ItMetamodel): void {
-    var obj: ItMetamodel;
-
-    if (typeof objClass == 'string') {
-      obj = new ItMetamodel();
-      obj.name = objClass;
-    } else {
-      obj = objClass;
-    }
-
-    this.AddTabContent(new TabContent(TabContentType.META_MODEL, obj));
-  }
-
-  private AddTabContent(tabContent: TabContent): void {
-    this.activeTab = tabContent;
-    this.activeTabIndex = this.tabs.length;
-    this.tabs = this.tabs.concat(tabContent);
-  }
-
-  DeleteTabContent(tabContent: TabContent): void {
-    this.tabs = this.tabs.filter(tc => tc !== tabContent);
-    this.activeTab = this.tabs[0];
   }
 
   //-------------------------
   // ItMap management
   //-------------------------
 
-  maps: ItMap[]=[];
+
   MapSaved(map: ItMap, isNew: boolean) {
     if (isNew) {
       this.maps = this.maps.concat(map);
@@ -206,14 +222,12 @@ export class GuiCtrlComponent {
   //-------------------------
   // ItApplication management
   //-------------------------
-  applications: ItApplication[];
-
   AddNewApplication() {
     this.AddApplicationTab('APP_NEW');
   }
 
   EditApplication(application: ItApplication) {
-    console.log(JSON.stringify(application));
+    console.log(inspect(application));
     this.AddApplicationTab(application);
   }
 
@@ -228,10 +242,10 @@ export class GuiCtrlComponent {
   DeleteApplication(application: ItApplication) {
     console.log("Delete app id=" + application.id + ", name=" + application.name);
     this.dataService.SetDataType(DataServiceDataType.APPLICATION);
-    this.dataService.Delete(application).subscribe(data => this.DeleteApplicationDataHandler(data));
+    this.dataService.Delete(application).subscribe(data => this.DeleteApplicationDataHandler(data, application));
   }
 
-  DeleteApplicationDataHandler(data: any): void {
+  DeleteApplicationDataHandler(data: any, applicaiton: ItApplication): void {
     if (data != undefined && data.status == 'success') {
       this.applications = this.applications.filter(a => a.id !== data.id);
     } else if (data == undefined) {
@@ -249,15 +263,58 @@ export class GuiCtrlComponent {
 
   GetApplicationDataHandler(data: any): void {
 
-    this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
-    if (data['data']!=undefined){
+    this.AddMessage('GetApplicationDataHandler: ' + inspect(data));
+    if (data['data'] != undefined) {
       //this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
-      this.applications =data['data'].map(jsonApp => new ItApplication().setFromJson(jsonApp));
+      this.applications = data['data'].map(jsonApp => new ItApplication().setFromJson(jsonApp));
     }
   }
 
   AddNewApplicationMap(application: ItApplication) {
     this.AddMapTab(application, 'MAP_NEW');
+  }
+  //-------------------------
+  // Tabs management
+  //-------------------------
+  tabs: TabContent[] = [];
+  activeTab: TabContent;
+  activeTabIndex: number = 0;
+
+  private AddApplicationTab(appref: string | ItApplication): void {
+    var app: ItApplication;
+
+    if (typeof appref == 'string') {
+      app = new ItApplication();
+      app.name = appref;
+    } else {
+      app = appref;
+    }
+
+    this.AddTabContent(new TabContent(TabContentType.APP, app));
+  }
+
+  private AddMapTab(app: ItApplication, mapref: string | ItMap): void {
+    var map: ItMap;
+
+    if (typeof mapref == 'string') {
+      map = new ItMap(app);
+      map.name = mapref;
+    } else {
+      map = mapref;
+    }
+
+    this.AddTabContent(new TabContent(TabContentType.MAP, map));
+  }
+
+  private AddTabContent(tabContent: TabContent): void {
+    this.activeTab = tabContent;
+    this.activeTabIndex = this.tabs.length;
+    this.tabs = this.tabs.concat(tabContent);
+  }
+
+  DeleteTabContent(tabContent: TabContent): void {
+    this.tabs = this.tabs.filter(tc => tc !== tabContent);
+    this.activeTab = this.tabs[0];
   }
   //------------
   // Trace, Debug, Error
@@ -312,5 +369,17 @@ export class GuiCtrlComponent {
     sessionStorage.removeItem('auth_token');
     this.app.logged = false;
     this.first = true;
+  }
+
+
+  //-------------------------
+  // SideNav contrrol
+  //-------------------------
+  sidenavIsOpen: boolean = true;
+  SidenavShowHide() {
+    this.sidenavIsOpen = !this.sidenavIsOpen;
+  }
+  IsSidenavIsOpen(): boolean {
+    return this.sidenavIsOpen;
   }
 }

@@ -12,6 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MapFormDialogComponent } from './map-form-dialog.component'
 import { EnumToArrayPipe } from '../core/util'
+import { inspect } from 'util';
 
 export interface DialogData {
   name: string;
@@ -104,9 +105,11 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
   AddApplication(evt: Event) {
     console.log(this.appSelectionControl.value);
-if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByName(this.appSelectionControl.value)!=undefined){
+//if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByName(this.appSelectionControl.value)!=undefined){
+  if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value)!=undefined){
     this.isToBeSaved = true;
-    this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
+    this.graph.insertVertex(this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value), 10, 10, 50, 50); 
+    //this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
     this.appSelectionControl.setValue('');
   }
   }
@@ -122,7 +125,11 @@ if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByNam
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('CHANGE: ' + JSON.stringify(changes.map));
+    console.log('CHANGE: ' + inspect(changes.map));
+
+//Also be aware that you can pass options object to inspect (see link above)
+// inspect(myObject[, options: {showHidden, depth, colors, showProxy, ...moreOptions}])
+
   }
 
   Save(): void {
@@ -157,8 +164,8 @@ if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByNam
 
   ngAfterViewInit() {
     const mapform: MapFormComponent = this;
-    this.graph = new MxGraph(this.graphContainerRef.nativeElement);
-   console.log('ngAfterViewInit:', this.map);
+    this.graph = new MxGraph(this.graphContainerRef.nativeElement, this.guiCtrl);
+    console.log('ngAfterViewInit:', this.map);
    
 
     this.graph.registerAddCellHandler(function(sender, evt) {
@@ -204,7 +211,7 @@ if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByNam
 
   NotEqual(o1, o2): boolean {
     var equal: boolean;
-    equal = JSON.stringify(o1).localeCompare(JSON.stringify(o2)) == 0;
+    equal = inspect(o1).localeCompare(inspect(o2)) == 0;
     return !equal;
   }
 }

@@ -11,6 +11,7 @@ export class ItMap extends ItAsset {
 	private assetClass : string;
   private graphData : string;
   private asset : ItAsset;
+  private linkAasset : ItAsset[];
 
   constructor(asset? : ItAsset) {
   	super();
@@ -19,10 +20,13 @@ export class ItMap extends ItAsset {
     	this.asset=asset;
     	this.assetID=asset.getID();
     	this.assetClass=asset.getClassName();
+      this.asset.addMap(this, true);
     }
     console.log('ItMap.constructor ', this);
   }
-  
+  public setAsset(asset:ItAsset) : void {
+     this.asset=asset;
+  }
   public getAsset() : ItAsset {
   	return this.asset;
   }
@@ -30,6 +34,7 @@ export class ItMap extends ItAsset {
   public getAssetID() : number {
   	return this.assetID;
   }
+
   public getAssetClass() : string {
   	return this.assetClass;
   }

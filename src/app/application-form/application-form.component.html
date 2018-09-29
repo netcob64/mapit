@@ -1,12 +1,13 @@
 <div class="appForm">
-  <h2>Application: {{ application.name | uppercase }}<span class="info" *ngIf="isToBeSaved"> (not saved)</span></h2>
+  <h2>Application: {{ application.name | uppercase }}<span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
   <table>
     <tr>
       <td>
         <mat-form-field>
-         <input matInput  placeholder="ID" disabled value="#{{application.id}}">
+         <input matInput  placeholder="ID" disabled value="#{{application.id}}">        
         </mat-form-field>      
       </td>
+     
       <td>  
         <mat-form-field>
           <input matInput value="{{application.version}}" placeholder="Verion" disabled>
@@ -16,6 +17,8 @@
     <tr>
       <td>
         <mat-form-field>
+
+          <!--<input matInput [(ngModel)]="application.name" placeholder="Name" (change)="FireChange('name',$event)">-->
           <input matInput [(ngModel)]="application.name" placeholder="Name">
         </mat-form-field>
       </td>
@@ -59,5 +62,5 @@
     {{errorMessage}}
   </mat-error>
   <br>
-  <button mat-raised-button (click)="Save();">Save</button>
+  <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
 </div>

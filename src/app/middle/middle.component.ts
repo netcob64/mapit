@@ -16,8 +16,9 @@ export class MiddleComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('MiddleComponent.ngOnInit() - call guiCtrl.GetApplications() and GetMetamodels()...');
     this.guiCtrl.GetApplications();
-    this.guiCtrl.GetMetamodels();
+    //this.guiCtrl.GetMetamodels();
   }
 
   AddNewApplication(event: Event): void {

@@ -27,5 +27,12 @@ export class ItMetamodel extends ItAsset {
   		this.attributes.push(new ItMetamodelAttribute(ItMetamodelAttributeType.LIST, "status", "Status", true));
   		this.attributes.push(new ItMetamodelAttribute(ItMetamodelAttributeType.DATE, "validityStart", "Validity start date", true));
   		this.attributes.push(new ItMetamodelAttribute(ItMetamodelAttributeType.DATE, "validityEnd", "Validity end date", true));
-	};
+	}
+	
+  	public clone(asset: ItMetamodel) : void {
+  		var dataObject = Object.assign({}, asset);
+        for (var prop in dataObject){
+        	this[prop]=dataObject[prop];
+        }
+ 	}
 }

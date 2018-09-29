@@ -1,17 +1,17 @@
 <mat-nav-list dense>
-  <mat-list-item *ngFor="let metamodel of guiCtrl.metamodels" (click)="Edit(metamodel, $event)">
+  <mat-list-item *ngFor="let asset of  guiCtrl.GetItMetamodels()" (click)="Edit(asset, $event)">
     <button mat-button (click)="stopEventPropagation($event)" [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
-    <span>{{ metamodel.name }} [{{metamodel.id}}]</span>
+    <span>{{asset.getName()}} [{{asset.getId()}}]</span>
     <mat-menu #menu="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="submenu">New...</button>
-      <button mat-menu-item (click)="Delete(metamodel, $event)">Delete</button>
-      <button mat-menu-item (click)="Edit(metamodel, $event)">Edit</button>
+      <button mat-menu-item (click)="Delete(asset, $event)">Delete</button>
+      <button mat-menu-item (click)="Edit(asset, $event)">Edit</button>
     </mat-menu>
     <mat-menu #submenu="matMenu">
-      <button mat-menu-item (click)="f1(metamodel)">?</button>
-      <button mat-menu-item (click)="f2(metamodel)">??</button>
+      <button mat-menu-item (click)="f1(asset, $event)">?</button>
+      <button mat-menu-item (click)="f2(asset, $event)">??</button>
       <button mat-menu-item>Other</button>
     </mat-menu>
   </mat-list-item>

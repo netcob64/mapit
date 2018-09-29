@@ -10,10 +10,30 @@ const vertexFtColor = 'white';
 const guideColor = '#c2185b';
 const selectionColor = '#00FFFF';
 
+export interface GraphObjectFactory {
+  GetLabelFor(className: string, id: number) : string;
+} 
+
+export class GraphObject {
+  id : number;
+  className: string;
+  objFactory: GraphObjectFactory;
+
+  constructor(objClass: string, objID: number, objFactory: GraphObjectFactory){
+    this.id=objID;
+    this.className=objClass;
+    this.objFactory=objFactory;
+  }
+  getLabel():string {
+    return this.objFactory.GetLabelFor(this.className, this.id);
+  }
+}
+
 export class MxGraph {
 
   private graph;
   private parent;
+  private factory: GraphObjectFactory;
 
   public registerAddCellHandler(handler: Function): void {
     this.graph.addListener(mxEvent.CELLS_ADDED, handler);
@@ -33,13 +53,15 @@ export class MxGraph {
   public insertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    return this.graph.insertVertex(this.parent, null, asset, x, y, w, h);
+    return this.graph.insertVertex(this.parent, null, this.assetToGraphObject(asset, this.factory), x, y, w, h);
   }
 
   public insertEdge(value, sourceAsset: ItAsset, targetAsset:ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    return this.graph.insertEdge(this.parent, null, value, sourceAsset, targetAsset);
+    return this.graph.insertEdge(this.parent, null, value, 
+      this.assetToGraphObject(sourceAsset, this.factory), 
+      this.assetToGraphObject(targetAsset, this.factory));
   }
 
   public removeSelection(): any {
@@ -52,20 +74,20 @@ export class MxGraph {
     return mxUtils.getPrettyXml(node);
   }
 
-  public setValue(cell, value) {
-    //
-    //this.graph.getView().getState(cell).setLabel(value);
-
+  public setValue(cell, value) {   
     this.graph.model.setValue(cell, value);
-    /*this.graph.getView().clear(cell, false, false);
-    this.graph.getView().validate();
-    this.graph.refresh(); */
-    console.log('MxGrpah.setValue()');
+   
+    /*console.log('MxGrpah.setValue()');
     console.log(cell);
-    console.log(value);
+    console.log(value);*/
   }
 
-  public constructor(container: Element) {
+  private assetToGraphObject(asset: ItAsset, factory: GraphObjectFactory) : GraphObject {
+    return new GraphObject(asset.getClassName(), asset.getId(), factory);
+  }
+  
+  public constructor(container: Element, factory: GraphObjectFactory) {
+    this.factory=factory;
     mxGraph.prototype.getAllConnectionConstraints = function(terminal, source) {
       if (terminal != null && terminal.shape != null) {
         if (terminal.shape.stencil != null) {
