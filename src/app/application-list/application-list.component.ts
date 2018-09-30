@@ -14,17 +14,22 @@ export class ApplicationListComponent implements OnInit {
 	//@ViewChild(MatMenuTrigger) menu: MatMenuTrigger;
 	constructor() {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		console.log('ApplicationListComponent.ngOnInit() - load apps...');
+		this.guiCtrl.LoadItAssets(ItApplication);		}
 
 	Delete(app: ItApplication, event:Event): void {		
 		//event.stopPropagation();
-		this.guiCtrl.DeleteApplication(app);		
+		//this.guiCtrl.DeleteApplication(app);		
+		this.guiCtrl.DeleteItAsset(app);		
 	}
 
 	Edit(app: ItApplication, event: Event): void {
 		event.stopPropagation();
-		this.guiCtrl.EditApplication(app);
+		//this.guiCtrl.EditApplication(app);
+		this.guiCtrl.EditItAsset(app);
 	}
+
 	AddApplicationMap(app: ItApplication, event: Event): void {
 		//event.stopPropagation();
 		this.guiCtrl.AddNewApplicationMap(app);

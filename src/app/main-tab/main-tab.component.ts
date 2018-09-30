@@ -17,17 +17,8 @@ export class MainTabComponent {
 	@Input() guiCtrl: GuiCtrlComponent;
 	selectedTab: number;
 
-	constructor() { }
-
-	ngOnInit() {
-	}
-
 	tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-		let str :string ='MainTabComponent.tabChanged : tabChangeEvent => index => '+ tabChangeEvent.index+' / tabGroup.selectedIndex='+ this.tabGroup.selectedIndex;
-		console.log(str);
-	}
-
-	SelectTab(index) {
-		this.selectedTab=index;
-	}
+		/*let str :string ='MainTabComponent.tabChanged : tabChangeEvent => index => '+ tabChangeEvent.index+' / tabGroup.selectedIndex='+ this.tabGroup.selectedIndex;
+		console.log(str);*/
+	}	
 }

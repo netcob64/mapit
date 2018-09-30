@@ -2,7 +2,7 @@ mat-sidenav-container {
 	height:100%;
 }
 app-footer {
-  background-color: #000a;
+  background-color: #100;
   position: absolute;
   bottom:0px;top:0px;
   max-height: 100%;

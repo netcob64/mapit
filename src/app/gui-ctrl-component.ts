@@ -62,7 +62,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
     dataService.guiCtrl = this;
 
-    var newTab: TabContent = new TabContent(TabContentType.TXT, {
+    this.AddTabContent(TabContentType.TXT, {
       name: 'Welcome',
       html: `<h1>Welcome</h1>
       <h3>TODO</h3>
@@ -88,8 +88,6 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       </ul>
     </div>`
     });
-
-    this.AddTabContent(newTab);
     //this.ShowError('coucou');
   }
 
@@ -110,13 +108,18 @@ export class GuiCtrlComponent implements GraphObjectFactory {
     return this.GetItAssets(this.IT_METAMODEL_CLASS_NAME);
   }
 
+  GetItApplications() {
+    return this.GetItAssets(this.IT_APPLICATION_CLASS_NAME);
+  }
+
   GetItAssets(className: string) : Array<ItAsset> {
     if (this.objectClassIndex.has(className)){
-    return Array.from(this.objectClassIndex.get(className).values());
-  } else {
-    return [];
+      return Array.from(this.objectClassIndex.get(className).values());
+    } else {
+      return [];
+    }
   }
-  }
+
   GetApplicationTitle(): string {
       return this.app.title;
     }
@@ -126,7 +129,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   //-------------------------
 
   AddNewMetamodel() {
-    this.AddItAssetTab('NEW META MODEL', ItMetamodel);
+    this.AddItAssetTab('NEW_METAMODEL', ItMetamodel);
   }
 
   private tabContentTypeForClass = {
@@ -151,7 +154,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       object = obj;
     }
 
-    this.AddTabContent(new TabContent(this.tabContentTypeForClass[object.getClassName()], object));
+    this.AddTabContent(this.tabContentTypeForClass[object.getClassName()], object);
   }
 
   EditItAsset(asset: ItAsset) {
@@ -223,11 +226,12 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   // ItApplication management
   //-------------------------
   AddNewApplication() {
-    this.AddApplicationTab('APP_NEW');
+       this.AddItAssetTab('NEW_APP', ItApplication);
   }
 
+/*
   EditApplication(application: ItApplication) {
-    console.log(inspect(application));
+    //console.log(inspect(application));
     this.AddApplicationTab(application);
   }
 
@@ -268,7 +272,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       //this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
       this.applications = data['data'].map(jsonApp => new ItApplication().setFromJson(jsonApp));
     }
-  }
+  }*/
 
   AddNewApplicationMap(application: ItApplication) {
     this.AddMapTab(application, 'MAP_NEW');
@@ -290,7 +294,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       app = appref;
     }
 
-    this.AddTabContent(new TabContent(TabContentType.APP, app));
+    this.AddTabContent(TabContentType.APP, app);
   }
 
   private AddMapTab(app: ItApplication, mapref: string | ItMap): void {
@@ -303,19 +307,35 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       map = mapref;
     }
 
-    this.AddTabContent(new TabContent(TabContentType.MAP, map));
+    this.AddTabContent(TabContentType.MAP, map);
   }
 
-  private AddTabContent(tabContent: TabContent): void {
-    this.activeTab = tabContent;
-    this.activeTabIndex = this.tabs.length;
-    this.tabs = this.tabs.concat(tabContent);
+  private AddTabContent(tabType: TabContentType, asset:ItAsset|Object): void {
+    let tab : TabContent;
+    let assName : string = (asset instanceof ItAsset? asset.getName() :"");
+
+    // search if asset is already open in a tab
+    let index = this.tabs.findIndex(elt => {
+      return elt.type == tabType && (assName=="" || assName == elt.content.getName())
+    });
+    //console.log('index='+index);
+    if (index < 0) {
+      // not found -> create new tab
+      tab = new TabContent(tabType, asset);
+      this.activeTab = tab;
+      this.activeTabIndex = this.tabs.length;
+      this.tabs = this.tabs.concat(tab);
+    } else {
+      // found -> show the tab
+      this.activeTabIndex = index;
+    }
   }
 
   DeleteTabContent(tabContent: TabContent): void {
     this.tabs = this.tabs.filter(tc => tc !== tabContent);
     this.activeTab = this.tabs[0];
   }
+
   //------------
   // Trace, Debug, Error
   //------------
@@ -370,7 +390,6 @@ export class GuiCtrlComponent implements GraphObjectFactory {
     this.app.logged = false;
     this.first = true;
   }
-
 
   //-------------------------
   // SideNav contrrol

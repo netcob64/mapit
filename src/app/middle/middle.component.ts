@@ -9,17 +9,11 @@ import { MatTreeModule } from '@angular/material/tree';
   styleUrls: ['./middle.component.css']
 })
 
-export class MiddleComponent implements OnInit {
+export class MiddleComponent {
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() panelOpenState: boolean = true;
 
   constructor() { }
-
-  ngOnInit() {
-    console.log('MiddleComponent.ngOnInit() - call guiCtrl.GetApplications() and GetMetamodels()...');
-    this.guiCtrl.GetApplications();
-    //this.guiCtrl.GetMetamodels();
-  }
 
   AddNewApplication(event: Event): void {
     event.stopPropagation(); // if not the accordilion close
