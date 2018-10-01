@@ -12,20 +12,39 @@ const selectionColor = '#00FFFF';
 
 export interface GraphObjectFactory {
   GetLabelFor(className: string, id: number) : string;
+  GetAssetFromID(className: string, id: number) : ItAsset;
 } 
 
+// Clmass avoid to inset asset full object and avoid circular reference in mxgraph
 export class GraphObject {
-  id : number;
-  className: string;
-  objFactory: GraphObjectFactory;
+  private id : number;
+  private className: string;
+  private objFactory: GraphObjectFactory;
 
   constructor(objClass: string, objID: number, objFactory: GraphObjectFactory){
     this.id=objID;
     this.className=objClass;
     this.objFactory=objFactory;
   }
-  getLabel():string {
+
+  GetLabel():string {
     return this.objFactory.GetLabelFor(this.className, this.id);
+  }
+
+  GetAsset():ItAsset {
+    return this.objFactory.GetAssetFromID(this.className, this.id);
+  }
+
+  GetId() : number {
+    return this.id;
+  }
+
+  GetClassName(): string {
+    return this.className;
+  }
+
+  GetFactory(): GraphObjectFactory {
+    return this.objFactory;
   }
 }
 
@@ -35,46 +54,46 @@ export class MxGraph {
   private parent;
   private factory: GraphObjectFactory;
 
-  public registerAddCellHandler(handler: Function): void {
+  public RegisterAddCellHandler(handler: Function): void {
     this.graph.addListener(mxEvent.CELLS_ADDED, handler);
   }
-  public registerBeforeAddVertexHandler(handler: Function): void {
+  public RegisterBeforeAddVertexHandler(handler: Function): void {
     this.graph.addListener(mxEvent.BEFORE_ADD_VERTEX, handler);
   }
 
-  public beginUpdate(): void {
+  public BeginUpdate(): void {
     this.graph.getModel().beginUpdate();
   }
 
-  public endUpdate(): void {
+  public EndUpdate(): void {
     this.graph.getModel().endUpdate();
   }
 
-  public insertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): any {
+  public InsertVertex(asset: ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    return this.graph.insertVertex(this.parent, null, this.assetToGraphObject(asset, this.factory), x, y, w, h);
+    return this.graph.insertVertex(this.parent, null, this.AssetToGraphObject(asset), x, y, w, h);
   }
 
-  public insertEdge(value, sourceAsset: ItAsset, targetAsset:ItAsset, x: number, y: number, w: number, h: number): any {
+  public InsertEdge(message: ItAsset, sourceAsset: ItAsset, targetAsset:ItAsset, x: number, y: number, w: number, h: number): any {
     //var node = (mxUtils.createXmlDocument()).createElement(asset.getClassName()+'-'+asset.name);
     //return this.graph.insertVertex(this.parent, null, {name: asset.name, asset: asset}, x, y, w, h);
-    return this.graph.insertEdge(this.parent, null, value, 
-      this.assetToGraphObject(sourceAsset, this.factory), 
-      this.assetToGraphObject(targetAsset, this.factory));
+    return this.graph.insertEdge(this.parent, null, this.AssetToGraphObject(message), 
+      this.AssetToGraphObject(sourceAsset, this.factory), 
+      this.AssetToGraphObject(targetAsset, this.factory));
   }
 
-  public removeSelection(): any {
+  public RemoveSelection(): any {
     return this.graph.removeCells(this.graph.getSelectionCells(), true /* remove also connected edge*/ );
   }
 
-  public viewXML(): string {
+  public ViewXML(): string {
     var encoder = new mxCodec();
     var node = encoder.encode(this.graph.getModel());
     return mxUtils.getPrettyXml(node);
   }
 
-  public setValue(cell, value) {   
+  public SetValue(cell, value) {   
     this.graph.model.setValue(cell, value);
    
     /*console.log('MxGrpah.setValue()');
@@ -82,8 +101,12 @@ export class MxGraph {
     console.log(value);*/
   }
 
-  private assetToGraphObject(asset: ItAsset, factory: GraphObjectFactory) : GraphObject {
-    return new GraphObject(asset.getClassName(), asset.getId(), factory);
+  public AssetToGraphObject(asset: ItAsset, factory?: GraphObjectFactory) : GraphObject {
+    return new GraphObject(asset.getClassName(), asset.getId(), (factory == undefined? this.factory : factory));
+  }
+
+  public GetAssetFromObject(obj: GraphObject) : ItAsset {
+    return this.factory.GetAssetFromID(obj.GetClassName(), obj.GetId());
   }
   
   public constructor(container: Element, factory: GraphObjectFactory) {
@@ -219,7 +242,6 @@ export class MxGraph {
           cell.value.name = value;
         }
 
-
         cellLabelChanged.apply(this, arguments);
       }
 
@@ -227,13 +249,9 @@ export class MxGraph {
         console.log('MxGraph.convertValueToString() ==> cell.value =');
         console.log(cell.value);
         if (cell.value != null) {
-          if (cell.value.name != undefined) {
-            return cell.value.name;
-          } else {
-            return cell.value;
-          }
+          return cell.value.GetLabel();
         } else {
-          return null;
+          return "no label";
         }
       };
 

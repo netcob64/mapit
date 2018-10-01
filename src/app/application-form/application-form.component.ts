@@ -52,12 +52,12 @@ export class ApplicationFormComponent {
     if (data==undefined){
       this.error = true;
       this.errorMessage = 'database error';
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     }
     else if (data.status != 'success'){
       this.error = true;
       this.errorMessage = data.message;
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.application.id != data.id;
       console.log('ApplicationFormComponent::SaveApplicationDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);

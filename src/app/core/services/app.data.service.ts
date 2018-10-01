@@ -81,6 +81,6 @@ export class AppDataService {
   }
   private log(msg) {
     console.log("ERROR: " + msg);
-    this.guiCtrl.AddMessage(msg);
+    this.guiCtrl.ShowMessage(msg);
   }
 }

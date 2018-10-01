@@ -34,7 +34,7 @@
     <mat-label>Map name</mat-label>
     <input type="text" matInput [(ngModel)]="map.name" placeholder="Name">
   </mat-form-field>
-  <span class="info" *ngIf="isToBeSaved"> (not saved)</span>
+  <span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span>
 </div>
 <div class="graphBody">
   <!--Map name:&nbsp;{{map.name}}<br>-->

@@ -26,7 +26,7 @@ export interface DialogData {
   styleUrls: ['./map-form.component.css']
 })
 
-export class MapFormComponent implements AfterViewChecked, AfterViewInit {
+export class MapFormComponent implements AfterViewInit {
   @ViewChild('graphContainer') graphContainerRef: ElementRef;
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() map: ItMap;
@@ -43,6 +43,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
   constructor(private dataService: DataService, private dialog: MatDialog) {
     this.dataService.SetDataType(DataServiceDataType.MAP);
+    this.prev=new ItMap();
   }
 
   OpenDialog(cell: mxCell): void {
@@ -50,8 +51,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.data = {
-    };
+    dialogConfig.data = {};
 
     const dialogRef = this.dialog.open(MapFormDialogComponent, dialogConfig);
 
@@ -59,33 +59,38 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
       data => {
         if (data != undefined) {
           // Create new message
-           this.isToBeSaved = true;
+          
+          this.isToBeSaved = true;
           const msg : ItMessage = new ItMessage();
-          msg.setData(data.description);
-          msg.setSource(cell.source.value);
-          msg.setTarget(cell.target.value);
-
-          this.graph.beginUpdate();
+          msg.SetData(data.description);
+          msg.SetSource(cell.source.value.GetAsset()); 
+          msg.SetTarget(cell.target.value.GetAsset()); 
+          //--> Test if the message already exists, if yes reuse, if not create
+        
+          this.guiCtrl.RegisterMessage(msg);
+         
+          this.graph.BeginUpdate();
           //console.log('message label =>' + data.description);
-          this.graph.setValue(cell, msg);
-          this.graph.endUpdate();
+          this.graph.SetValue(cell, this.graph.AssetToGraphObject(msg));
+          this.graph.EndUpdate();
           //console.log(this.graph);
+          
         } else {
           // no name provided for link -> remove created edge
           console.log('NO NAME FORM LINK');
-          this.graph.removeSelection();
+          this.graph.RemoveSelection();
         }
       }
     );
   }
 
   GraphInfo(){
-    console.log(this.graph.viewXML());
+    console.log(this.graph.ViewXML());
     console.log(ItMapType);
   }
 
   ngOnInit() {
-    this.Clone();
+    this.prev.clone(this.map);
 
     this.filteredOptions = this.appSelectionControl.valueChanges
       .pipe(
@@ -97,7 +102,8 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
   }
 
   private _filter(value: string): string[] {
-    const availableApplications = this.guiCtrl.applications.map(app => app.name);
+    //const availableApplications = this.guiCtrl.applications
+    const availableApplications = this.guiCtrl.GetItAssets(this.guiCtrl.IT_APPLICATION_CLASS_NAME).map(app => app.name);
     const filterValue = value.toLowerCase();
     return availableApplications.filter(appName => appName.toLowerCase().includes(filterValue));
     //return this.availableApplications.filter(option => option.toLowerCase().includes(filterValue));
@@ -105,17 +111,17 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
   AddApplication(evt: Event) {
     console.log(this.appSelectionControl.value);
-//if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByName(this.appSelectionControl.value)!=undefined){
-  if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value)!=undefined){
-    this.isToBeSaved = true;
-    this.graph.insertVertex(this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value), 10, 10, 50, 50); 
-    //this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
-    this.appSelectionControl.setValue('');
-  }
+    //if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetApplicationByName(this.appSelectionControl.value)!=undefined){
+    if(this.appSelectionControl.value!=undefined && this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value)!=undefined){
+      this.isToBeSaved = true;
+      this.graph.InsertVertex(this.guiCtrl.GetAssetByName(this.guiCtrl.IT_APPLICATION_CLASS_NAME,this.appSelectionControl.value), 10, 10, 50, 50); 
+      //this.graph.insertVertex(this.guiCtrl.GetApplicationByName(this.appSelectionControl.value), 10, 10, 50, 50);
+      this.appSelectionControl.setValue('');
+    }
   }
 
   RemoveSelectionFromMap() {
-    let cells = this.graph.removeSelection();
+    let cells = this.graph.RemoveSelection();
     console.log(cells);
     console.log(this.graph);
   }
@@ -126,14 +132,12 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('CHANGE: ' + inspect(changes.map));
-
-//Also be aware that you can pass options object to inspect (see link above)
-// inspect(myObject[, options: {showHidden, depth, colors, showProxy, ...moreOptions}])
-
+    //Also be aware that you can pass options object to inspect (see link above)
+    // inspect(myObject[, options: {showHidden, depth, colors, showProxy, ...moreOptions}])
   }
 
   Save(): void {
-    this.map.setGraphData(this.graph.viewXML());
+    this.map.setGraphData(this.graph.ViewXML());
     this.dataService.Save(this.map).subscribe(data => this.SaveDataHandler(data));
   }
 
@@ -141,26 +145,20 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     if (data ==undefined)  {
       this.error = true;
       this.errorMessage = 'database error';
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     } else if (data.status != 'success') {
       this.error = true;
       this.errorMessage = data.message;
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.map.id != data.id;
       console.log('MapFormComponent::SaveDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
       this.error = false;
       this.map.id = data.id;
-      this.guiCtrl.MapSaved(this.map, newObj);
-      this.Clone();
+      this.guiCtrl.ItAssetSaved(this.map, this.prev);
+      this.prev.clone(this.map);
     }
   }
-
-  Clone(): void {
-    this.isToBeSaved = false;
-    this.prev = Object.assign({}, this.map);
-  }
-
 
   ngAfterViewInit() {
     const mapform: MapFormComponent = this;
@@ -168,7 +166,7 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     console.log('ngAfterViewInit:', this.map);
    
 
-    this.graph.registerAddCellHandler(function(sender, evt) {
+    this.graph.RegisterAddCellHandler(function(sender, evt) {
       console.log('CELLS_ADDED:');
       console.log(evt);
 
@@ -186,9 +184,9 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
       }
     });
 
-    this.graph.beginUpdate();
+    this.graph.BeginUpdate();
     try {
-      let c1 = this.graph.insertVertex(this.map.getAsset(), 20, 40, 80, 70);
+      let c1 = this.graph.InsertVertex(this.map.getAsset(), 20, 40, 80, 70);
       /*
       let m = this.guiCtrl.GetApplicationByName('moSaic');
       let c2 = this.graph.insertVertex(m, 20, 40, 80, 70);
@@ -197,15 +195,15 @@ export class MapFormComponent implements AfterViewChecked, AfterViewInit {
     } catch (error) {
       console.error(error);
     } finally {
-      this.graph.endUpdate();
+      this.graph.EndUpdate();
     }
   }
 
-  ngAfterViewChecked() {
-    if (this.NotEqual(this.map, this.prev) || this.map.id == null) {
-      this.isToBeSaved = true;
+  CheckToBeSaved() : boolean {
+     if (this.NotEqual(this.map , this.prev) || this.map.id == null) {
+      return true; 
     } else {
-      this.isToBeSaved = false;
+      return false; 
     }
   }
 

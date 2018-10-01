@@ -24,6 +24,14 @@ export class ItMap extends ItAsset {
     }
     console.log('ItMap.constructor ', this);
   }
+
+  public clone(asset: ItMap)  {
+    var dataObject = Object.assign({}, asset);
+    for (var prop in dataObject){
+      this[prop]=dataObject[prop];
+    }
+  }
+  
   public setAsset(asset:ItAsset) : void {
      this.asset=asset;
   }

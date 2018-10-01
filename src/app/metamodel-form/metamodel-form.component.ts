@@ -32,7 +32,7 @@ export class MetamodelFormComponent  {
 
   ngOnInit() {
     this.prev.clone(this.model);
-    this.guiCtrl.AddMessage('attributes: ' + inspect(this.model.attributes));
+    this.guiCtrl.ShowMessage('attributes: ' + inspect(this.model.attributes));
   }
 
   CheckToBeSaved() : boolean {
@@ -75,14 +75,14 @@ export class MetamodelFormComponent  {
     if (data == undefined) { 
       this.error = true;
       this.errorMessage = 'database error';
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     } else if (data.status != 'success') {
       this.error = true;
       this.errorMessage = data.message;
-      this.guiCtrl.AddMessage(this.errorMessage);
+      this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
       var newObj: boolean = this.model.id != data.id;
-      this.guiCtrl.AddMessage('MetamodelFormComponent::SaveMetamodelDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
+      this.guiCtrl.ShowMessage('MetamodelFormComponent::SaveMetamodelDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
       this.error=false;
       this.model.id = data.id;
       this.model.version = data.version;

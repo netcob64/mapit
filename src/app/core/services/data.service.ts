@@ -104,6 +104,6 @@ export class DataService {
   }
   private log(msg) {
    console.log(msg);
-    this.guiCtrl.AddMessage(msg);
+    this.guiCtrl.ShowMessage(msg);
   }
 }

@@ -70,5 +70,8 @@ export class ItAsset {
   public setName(name:string):void{
      this.name=name;
   }
+  IsEqual(asset: ItAsset): boolean {
+    return asset.id == this.id;
+  }
 }
 

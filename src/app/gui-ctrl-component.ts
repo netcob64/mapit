@@ -3,6 +3,7 @@ import { AppComponent } from './app.component';
 import { ItAsset } from './core/models/it-asset';
 import { ItApplication } from './core/models/it-application';
 import { ItMap } from './core/models/it-map';
+import { ItMessage } from './core/models/it-message';
 import { TabContentType } from './core/models/tab-content-type';
 import { ItMetamodel } from './core/models/it-metamodel';
 import { DataService } from './core/services/data.service';
@@ -30,9 +31,6 @@ class TabContent {
   }
 }
 
-
-
-
 @Component({ selector: 'gui-ctrl', template: `` })
 export class GuiCtrlComponent implements GraphObjectFactory {
   me: GuiCtrlComponent = this;
@@ -41,24 +39,26 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   Map < string,
   ItAsset >> ;
   //metamodels: ItMetamodel[];
-  applications: ItApplication[];
-  maps: ItMap[];
+  //applications: ItApplication[];
+  //maps: ItMap[];
   metamodels(): Map < string,  ItAsset > { return this.objectClassIndex.get(this.IT_METAMODEL_CLASS_NAME); }
   test: boolean = true;
 
-  /* TODO from Database */
+  /* TODO: initialize from Database */
   public IT_METAMODEL_CLASS_NAME: string = (new ItMetamodel()).getClassName();
   public IT_APPLICATION_CLASS_NAME: string = (new ItApplication()).getClassName();
   public IT_MAP_CLASS_NAME: string = (new ItMap()).getClassName();
+  public IT_MESSAGE_CLASS_NAME: string = (new ItMessage()).getClassName();
 
   constructor(private dataService: DataService) {
     this.objectClassIndex = new Map();
     //this.metamodels = [];    
-    this.applications = [];
-    this.maps = [];
+    //this.applications = [];
+    //this.maps = [];
     this.objectClassIndex.set(this.IT_APPLICATION_CLASS_NAME, new Map());
     this.objectClassIndex.set(this.IT_METAMODEL_CLASS_NAME, new Map());
     this.objectClassIndex.set(this.IT_MAP_CLASS_NAME, new Map());
+    this.objectClassIndex.set(this.IT_MESSAGE_CLASS_NAME, new Map());
 
     dataService.guiCtrl = this;
 
@@ -79,6 +79,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
         <li><b>Map:</b>Bug affichage mxGrpah quand Zoom Chrome actif....</li>
         <li><b>Map:</b>Bouton Zoom</li>
         <li><b>Map:</b>Print, Print setup, Preview</li>
+        <li><b>Map:</b>add ANALitics funtion -> graph of dependencies...</li>
         <li>if an asset edition tab already exist don't create a new one...</li>
         <li>Gestion de l'objet meta model...: <b>revoir l'IHM de gestion des attr system</b></li>
         <li>Angular Material Tree component pour list des app?</li>        
@@ -92,24 +93,36 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   }
 
   GetLabelFor(className: string, id: number): string {
-    return "guiCtrl.GetLabelFor - BUG TBD"; //this.objectClassIndex.get(className).objectIdIndex[id].getName();
-  }
-  /*GetApplicationByName(appName): ItApplication {
-    return this.applications.find(function(app) { return app.name == appName; });
-  }*/
+    let assets: Array<ItAsset> = [...this.objectClassIndex.get(className).values()];
+    let asset : ItAsset = assets.find(asset => asset.getId() == id);
+    return asset.getName();
+  } 
 
-  GetAssetByName(className: string, name: string): ItAsset {
-    return this.objectClassIndex[className].find(function(asset) { return asset.name == name; });
+  GetAssetFromID(className: string, id: number) : ItAsset {
+    let assets: Array<ItAsset> = [...this.objectClassIndex.get(className).values()];
+    return assets.find(asset => asset.getId() == id);
   }
+  /**
+  *
+  */
+  GetAssetByName(className: string, name: string): ItAsset {
+    return this.objectClassIndex.get(className).get(name);
+  }
+
   GetItAssetNameIndex(className: string) : Map<string, ItAsset> {
     return this.objectClassIndex.get(className);
   }  
+
   GetItMetamodels() {
     return this.GetItAssets(this.IT_METAMODEL_CLASS_NAME);
   }
 
   GetItApplications() {
     return this.GetItAssets(this.IT_APPLICATION_CLASS_NAME);
+  }
+
+  GetItMaps() {
+    return this.GetItAssets(this.IT_MAP_CLASS_NAME);
   }
 
   GetItAssets(className: string) : Array<ItAsset> {
@@ -201,7 +214,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   
   LoadItAssetsDataHandler(data: any, assetClass: any): void {
     var asset:ItAsset= new assetClass();
-    this.AddMessage('LoadItAssetsDataHandler(): asset class = ' + asset.getClassName()+ ' - data : ' + inspect(data));
+    this.ShowMessage('LoadItAssetsDataHandler(): asset class = ' + asset.getClassName()+ ' - data : ' + inspect(data));
     if (data['data'] != undefined) {
       data['data'].forEach(jsonData => this.objectClassIndex.get(asset.getClassName()).set(jsonData.name, (new assetClass()).setFromJson(jsonData)));
       console.log('LoadItAssetsDataHandler() - '+asset.getClassName()+'(s) loaded!');
@@ -213,66 +226,19 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   //-------------------------
   // ItMap management
   //-------------------------
-
-
-  MapSaved(map: ItMap, isNew: boolean) {
-    if (isNew) {
-      this.maps = this.maps.concat(map);
-    } else {
-      this.maps = this.maps.filter(a => a !== map).concat(map);
+  RegisterMessage(message: ItAsset) : void {
+    let messages : Array<ItAsset> = [...this.objectClassIndex.get(this.IT_MESSAGE_CLASS_NAME).values()];
+    let existingMessage = messages.find(msg => message.IsEqual(msg));
+    if (existingMessage==undefined) {
+      this.objectClassIndex.get(this.IT_MESSAGE_CLASS_NAME).set(message.getName(), message);
     }
   }
   //-------------------------
   // ItApplication management
   //-------------------------
   AddNewApplication() {
-       this.AddItAssetTab('NEW_APP', ItApplication);
+    this.AddItAssetTab('NEW_APP', ItApplication);
   }
-
-/*
-  EditApplication(application: ItApplication) {
-    //console.log(inspect(application));
-    this.AddApplicationTab(application);
-  }
-
-  ApplicationSaved(application: ItApplication, isNew: boolean) {
-    if (isNew) {
-      this.applications = this.applications.concat(application);
-    } else {
-      this.applications = this.applications.filter(a => a !== application).concat(application);
-    }
-  }
-
-  DeleteApplication(application: ItApplication) {
-    console.log("Delete app id=" + application.id + ", name=" + application.name);
-    this.dataService.SetDataType(DataServiceDataType.APPLICATION);
-    this.dataService.Delete(application).subscribe(data => this.DeleteApplicationDataHandler(data, application));
-  }
-
-  DeleteApplicationDataHandler(data: any, applicaiton: ItApplication): void {
-    if (data != undefined && data.status == 'success') {
-      this.applications = this.applications.filter(a => a.id !== data.id);
-    } else if (data == undefined) {
-      this.ShowError('error trying to delete app');
-    } else {
-      this.ShowError(data.message);
-    }
-  }
-
-  GetApplications(): void {
-    // transform Observable<ItApplication[]> to ItApplication[]
-    this.dataService.SetDataType(DataServiceDataType.APPLICATION);
-    this.dataService.Get().subscribe(data => this.GetApplicationDataHandler(data));
-  }
-
-  GetApplicationDataHandler(data: any): void {
-
-    this.AddMessage('GetApplicationDataHandler: ' + inspect(data));
-    if (data['data'] != undefined) {
-      //this.AddMessage('GetApplicationDataHandler: ' + JSON.stringify(data));
-      this.applications = data['data'].map(jsonApp => new ItApplication().setFromJson(jsonApp));
-    }
-  }*/
 
   AddNewApplicationMap(application: ItApplication) {
     this.AddMapTab(application, 'MAP_NEW');
@@ -342,13 +308,13 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   nbError: number = 0;
   ShowError(error: string) {
     this.nbError++;
-    this.AddMessage('<span class="error"><b>ERROR >>> </b>' + error + '</span>');
+    this.ShowMessage('<span class="error"><b>ERROR >>> </b>' + error + '</span>');
     console.error("ERROR >>> " + error);
   }
 
   footerMessage: string = "";
   // TRACE IN gui
-  AddMessage(msg: string): void {
+  ShowMessage(msg: string): void {
     var s: string = this.footerMessage.substring(0, 10000);
     this.footerMessage = '<p>' + msg + '</p>' + s;
     //console.log(msg);
