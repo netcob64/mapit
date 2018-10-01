@@ -1,16 +1,16 @@
 <div class="appForm">
-  <h2>Application: {{ application.name | uppercase }}<span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
+  <h2>Application: {{ application.GetName() | uppercase }}<span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
   <table>
     <tr>
       <td>
         <mat-form-field>
-         <input matInput  placeholder="ID" disabled value="#{{application.id}}">        
+         <input matInput  placeholder="ID" disabled value="#{{application.GetId()}}">        
         </mat-form-field>      
       </td>
      
       <td>  
         <mat-form-field>
-          <input matInput value="{{application.version}}" placeholder="Verion" disabled>
+          <input matInput value="{{application.GetVersion()}}" placeholder="Verion" disabled>
         </mat-form-field>
       </td>
     </tr>

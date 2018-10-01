@@ -73,8 +73,7 @@ export class MapFormComponent implements AfterViewInit {
           //console.log('message label =>' + data.description);
           this.graph.SetValue(cell, this.graph.AssetToGraphObject(msg));
           this.graph.EndUpdate();
-          //console.log(this.graph);
-          
+          //console.log(this.graph);          
         } else {
           // no name provided for link -> remove created edge
           console.log('NO NAME FORM LINK');
@@ -103,7 +102,7 @@ export class MapFormComponent implements AfterViewInit {
 
   private _filter(value: string): string[] {
     //const availableApplications = this.guiCtrl.applications
-    const availableApplications = this.guiCtrl.GetItAssets(this.guiCtrl.IT_APPLICATION_CLASS_NAME).map(app => app.name);
+    const availableApplications = this.guiCtrl.GetItAssets(this.guiCtrl.IT_APPLICATION_CLASS_NAME).map(app => app.GetName());
     const filterValue = value.toLowerCase();
     return availableApplications.filter(appName => appName.toLowerCase().includes(filterValue));
     //return this.availableApplications.filter(option => option.toLowerCase().includes(filterValue));
@@ -141,7 +140,7 @@ export class MapFormComponent implements AfterViewInit {
     this.dataService.Save(this.map).subscribe(data => this.SaveDataHandler(data));
   }
 
-  SaveDataHandler(data: any): void {
+  SaveDataHandler(data: any): void { 
     if (data ==undefined)  {
       this.error = true;
       this.errorMessage = 'database error';
@@ -151,10 +150,10 @@ export class MapFormComponent implements AfterViewInit {
       this.errorMessage = data.message;
       this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
-      var newObj: boolean = this.map.id != data.id;
-      console.log('MapFormComponent::SaveDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
+
+      console.log('MapFormComponent::SaveDataHandler: CREATED or UPDATED');
       this.error = false;
-      this.map.id = data.id;
+      //this.map.id = data.id;
       this.guiCtrl.ItAssetSaved(this.map, this.prev);
       this.prev.clone(this.map);
     }
@@ -200,7 +199,7 @@ export class MapFormComponent implements AfterViewInit {
   }
 
   CheckToBeSaved() : boolean {
-     if (this.NotEqual(this.map , this.prev) || this.map.id == null) {
+     if (this.NotEqual(this.map , this.prev) || this.map.GetId() == null) {
       return true; 
     } else {
       return false; 

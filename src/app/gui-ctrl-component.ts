@@ -20,11 +20,11 @@ class TabContent {
   }
   getLabel(): string {
     if (this.content instanceof ItApplication) {
-      return 'app: ' + this.content.name;
+    return 'app: ' + this.content.GetName();
     } else if (this.content instanceof ItMetamodel) {
-      return 'class: ' + this.content.name;
+    return 'class: ' + this.content.GetName();
     } else if (this.content instanceof ItMap) {
-      return 'map[' + this.content.type + ']: ' + this.content.name + ' (' + this.content.getAsset().name + ')';
+    return 'map[' + this.content.GetType() + ']: ' + this.content.GetName() + ' (' + this.content.getAsset().GetName() + ')';
     } else {
       return this.content.name;
     }
@@ -45,10 +45,10 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   test: boolean = true;
 
   /* TODO: initialize from Database */
-  public IT_METAMODEL_CLASS_NAME: string = (new ItMetamodel()).getClassName();
-  public IT_APPLICATION_CLASS_NAME: string = (new ItApplication()).getClassName();
-  public IT_MAP_CLASS_NAME: string = (new ItMap()).getClassName();
-  public IT_MESSAGE_CLASS_NAME: string = (new ItMessage()).getClassName();
+  public IT_METAMODEL_CLASS_NAME: string = (new ItMetamodel()).GetClassName();
+  public IT_APPLICATION_CLASS_NAME: string = (new ItApplication()).GetClassName();
+  public IT_MAP_CLASS_NAME: string = (new ItMap()).GetClassName();
+  public IT_MESSAGE_CLASS_NAME: string = (new ItMessage()).GetClassName();
 
   constructor(private dataService: DataService) {
     this.objectClassIndex = new Map();
@@ -94,13 +94,13 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
   GetLabelFor(className: string, id: number): string {
     let assets: Array<ItAsset> = [...this.objectClassIndex.get(className).values()];
-    let asset : ItAsset = assets.find(asset => asset.getId() == id);
-    return asset.getName();
+    let asset : ItAsset = assets.find(asset => asset.GetId() == id);
+    return asset.GetName();
   } 
 
   GetAssetFromID(className: string, id: number) : ItAsset {
     let assets: Array<ItAsset> = [...this.objectClassIndex.get(className).values()];
-    return assets.find(asset => asset.getId() == id);
+    return assets.find(asset => asset.GetId() == id);
   }
   /**
   *
@@ -162,12 +162,12 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
     if (typeof obj == 'string') {
       object = new objClass();
-      object.setName(obj);
+      object.SetName(obj);
     } else {
       object = obj;
     }
 
-    this.AddTabContent(this.tabContentTypeForClass[object.getClassName()], object);
+    this.AddTabContent(this.tabContentTypeForClass[object.GetClassName()], object);
   }
 
   EditItAsset(asset: ItAsset) {
@@ -177,11 +177,11 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
   ItAssetSaved(newAsset: ItAsset, oldAsset: ItAsset) {
     //console.log('ItAssetSaved => asset ',inspect(asset));
-    console.log('ItAssetSaved => asset ', newAsset.getName(), oldAsset.getName());
-    if (this.objectClassIndex.get(newAsset.getClassName()).has(oldAsset.getName())) {
-      this.objectClassIndex.get(newAsset.getClassName()).delete(oldAsset.getName());
+    console.log('ItAssetSaved => asset ', newAsset.GetName(), oldAsset.GetName());
+    if (this.objectClassIndex.get(newAsset.GetClassName()).has(oldAsset.GetName())) {
+      this.objectClassIndex.get(newAsset.GetClassName()).delete(oldAsset.GetName());
     }
-    this.objectClassIndex.get(newAsset.getClassName()).set(newAsset.getName(), newAsset);
+    this.objectClassIndex.get(newAsset.GetClassName()).set(newAsset.GetName(), newAsset);
   }
 
   private dataServiceTypeForClass = {
@@ -191,33 +191,33 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   }
 
   DeleteItAsset(asset: ItAsset) {
-    console.log("Delete model id=" + asset.getId() + ", name=" + asset.getName());
-    this.dataService.SetDataType(this.dataServiceTypeForClass[asset.getClassName()]);
+    console.log("Delete model id=" + asset.GetId() + ", name=" + asset.GetName());
+    this.dataService.SetDataType(this.dataServiceTypeForClass[asset.GetClassName()]);
     this.dataService.Delete(asset).subscribe(data => this.DeleteItAssetDataHandler(data, asset));
   }
 
   DeleteItAssetDataHandler(data: any, asset: ItAsset): void {
     if (data != undefined && data.status == 'success') {
       //this.metamodels = this.metamodels.filter(a => a.id !== data.id);
-      this.objectClassIndex.get(asset.getClassName()).delete(asset.getName());
+      this.objectClassIndex.get(asset.GetClassName()).delete(asset.GetName());
     } else if (data != undefined) {
       this.ShowError(data.message);
     } else {
-      this.ShowError('Error: DB issue, trying to delete ' + asset.getClassName() + ' '+ asset.getName());
+      this.ShowError('Error: DB issue, trying to delete ' + asset.GetClassName() + ' '+ asset.GetName());
     }
   }
 
   LoadItAssets(assetClass: any) : void {
-    this.dataService.SetDataType(this.dataServiceTypeForClass[(new assetClass()).getClassName()]);
+    this.dataService.SetDataType(this.dataServiceTypeForClass[(new assetClass()).GetClassName()]);
     this.dataService.Get().subscribe(data => this.LoadItAssetsDataHandler(data, assetClass));
   }
   
   LoadItAssetsDataHandler(data: any, assetClass: any): void {
     var asset:ItAsset= new assetClass();
-    this.ShowMessage('LoadItAssetsDataHandler(): asset class = ' + asset.getClassName()+ ' - data : ' + inspect(data));
+    this.ShowMessage('LoadItAssetsDataHandler(): asset class = ' + asset.GetClassName()+ ' - data : ' + inspect(data));
     if (data['data'] != undefined) {
-      data['data'].forEach(jsonData => this.objectClassIndex.get(asset.getClassName()).set(jsonData.name, (new assetClass()).setFromJson(jsonData)));
-      console.log('LoadItAssetsDataHandler() - '+asset.getClassName()+'(s) loaded!');
+      data['data'].forEach(jsonData => this.objectClassIndex.get(asset.GetClassName()).set(jsonData.name, (new assetClass()).SetFromJson(jsonData)));
+      console.log('LoadItAssetsDataHandler() - '+asset.GetClassName()+'(s) loaded!');
     } else {
       this.ShowError('Error: DB issue, trying to get metamodels');
     }
@@ -230,7 +230,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
     let messages : Array<ItAsset> = [...this.objectClassIndex.get(this.IT_MESSAGE_CLASS_NAME).values()];
     let existingMessage = messages.find(msg => message.IsEqual(msg));
     if (existingMessage==undefined) {
-      this.objectClassIndex.get(this.IT_MESSAGE_CLASS_NAME).set(message.getName(), message);
+      this.objectClassIndex.get(this.IT_MESSAGE_CLASS_NAME).set(message.GetName(), message);
     }
   }
   //-------------------------
@@ -250,25 +250,26 @@ export class GuiCtrlComponent implements GraphObjectFactory {
   activeTab: TabContent;
   activeTabIndex: number = 0;
 
+/*
   private AddApplicationTab(appref: string | ItApplication): void {
     var app: ItApplication;
 
     if (typeof appref == 'string') {
       app = new ItApplication();
-      app.name = appref;
+      app.SetName(appref);
     } else {
       app = appref;
     }
 
     this.AddTabContent(TabContentType.APP, app);
   }
-
+*/
   private AddMapTab(app: ItApplication, mapref: string | ItMap): void {
     var map: ItMap;
 
     if (typeof mapref == 'string') {
       map = new ItMap(app);
-      map.name = mapref;
+      map.SetName(mapref);
     } else {
       map = mapref;
     }
@@ -278,11 +279,11 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
   private AddTabContent(tabType: TabContentType, asset:ItAsset|Object): void {
     let tab : TabContent;
-    let assName : string = (asset instanceof ItAsset? asset.getName() :"");
+    let assName : string = (asset instanceof ItAsset? asset.GetName() :"");
 
     // search if asset is already open in a tab
     let index = this.tabs.findIndex(elt => {
-      return elt.type == tabType && (assName=="" || assName == elt.content.getName())
+      return elt.type == tabType && (assName=="" || assName == elt.content.GetName())
     });
     //console.log('index='+index);
     if (index < 0) {

@@ -11,12 +11,11 @@ import { inspect } from 'util';
   templateUrl: './application-form.component.html',
   styleUrls: ['./application-form.component.css']
 })
-export class ApplicationFormComponent {
 
+export class ApplicationFormComponent {
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() application: ItApplication;
 
- 
   ItApplicationTypeEnum=ItApplicationType;
   ItAssetStatusEnum=ItAssetStatus;
 
@@ -35,7 +34,7 @@ export class ApplicationFormComponent {
   }
 
   CheckToBeSaved() : boolean {
-     if (this.NotEqual(this.application , this.prev) || this.application.id == null) {
+     if (this.NotEqual(this.application , this.prev) || this.application.GetId() == null) {
       return true; 
     } else {
       return false; 
@@ -59,10 +58,10 @@ export class ApplicationFormComponent {
       this.errorMessage = data.message;
       this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
-      var newObj: boolean = this.application.id != data.id;
-      console.log('ApplicationFormComponent::SaveApplicationDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
+      
+      console.log('ApplicationFormComponent::SaveApplicationDataHandler:  CREATED or UPDATED');
       this.error = false;
-      this.application.id = data.id;
+   
       //this.guiCtrl.ApplicationSaved(this.application, newObj); 
       this.guiCtrl.ItAssetSaved(this.application  , this.prev);    
       this.prev.clone(this.application);

@@ -36,7 +36,7 @@ export class MetamodelFormComponent  {
   }
 
   CheckToBeSaved() : boolean {
-    if (this.NotEqual(this.model , this.prev) || this.model.id == null) {
+    if (this.NotEqual(this.model , this.prev) || this.model.GetId() == null) {
       return true; 
     } else {
       return false; 
@@ -81,11 +81,11 @@ export class MetamodelFormComponent  {
       this.errorMessage = data.message;
       this.guiCtrl.ShowMessage(this.errorMessage);
     } else {
-      var newObj: boolean = this.model.id != data.id;
-      this.guiCtrl.ShowMessage('MetamodelFormComponent::SaveMetamodelDataHandler: ' + (newObj ? 'CREATED' : 'UPDATED') + ' id=' + data.id);
+      //var newObj: boolean = this.model.id != data.id;
+      this.guiCtrl.ShowMessage('MetamodelFormComponent::SaveMetamodelDataHandler: CREATED or UPDATED');
       this.error=false;
-      this.model.id = data.id;
-      this.model.version = data.version;
+      //this.model.id = data.id;
+      //this.model.version = data.version;
       //console.log("SaveMetamodelDataHandler prev.name='"+this.prev.name+"' model.name='"+this.model.name+"'");
       this.guiCtrl.ItAssetSaved(this.model, this.prev);
       this.prev.clone(this.model);

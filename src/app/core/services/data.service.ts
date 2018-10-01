@@ -68,14 +68,14 @@ export class DataService {
     const url = `${this.saveUrl}/class=${this.objectClass}`;
     return this.http.post<ItAsset>(url, obj, httpOptions)
       .pipe(
-      tap((application: ItAsset) => this.log(`added object class=${this.objectClass} id=${obj.id}`)),
+      tap((application: ItAsset) => this.log(`added object class=${this.objectClass} id=${obj.GetId()}`)),
       catchError(this.handleError<ItAsset>('Save'))
       );
   }
 
 
   Delete(obj: ItAsset | number): Observable<ItAsset> {
-    const id = typeof obj === 'number' ? obj : obj.id;
+    const id = typeof obj === 'number' ? obj : obj.GetId();
     const url = `${this.deleteUrl}/class=${this.objectClass}&id=${id}`;
 
     return this.http.delete<ItAsset>(url, httpOptions)

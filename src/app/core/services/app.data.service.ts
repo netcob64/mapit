@@ -42,14 +42,14 @@ export class AppDataService {
   SaveApplication(application: ItApplication): Observable<ItApplication> {
     return this.http.post<ItApplication>(this.saveAppUrl, application, httpOptions)
       .pipe(
-      tap((application: ItApplication) => this.log(`added application w/ id=${application.id}`)),
+      tap((application: ItApplication) => this.log(`added application w/ id=${application.GetId()}`)),
       catchError(this.handleError<ItApplication>('SaveApplication'))
       );
   }
 
 
   DeleteApplication(app: ItApplication | number): Observable<ItApplication> {
-    const id = typeof app === 'number' ? app : app.id;
+    const id = typeof app === 'number' ? app : app.GetId();
     const url = `${this.deleteAppUrl}/id=${id}`;
 
     return this.http.delete<ItApplication>(url, httpOptions)

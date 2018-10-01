@@ -47,7 +47,7 @@ export class ItMessage extends ItAsset {
     if (this.id != undefined && message.id != undefined) {
       return (this.id == message.id);
     } 
-    return (message.source.IsEqual(this.source) && message.target.IsEqual(this.target) && message.getName()==this.getName());
+    return (message.source.IsEqual(this.source) && message.target.IsEqual(this.target) && message.GetName()==this.GetName());
   }
 }
 

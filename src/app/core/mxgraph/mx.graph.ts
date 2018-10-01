@@ -102,7 +102,7 @@ export class MxGraph {
   }
 
   public AssetToGraphObject(asset: ItAsset, factory?: GraphObjectFactory) : GraphObject {
-    return new GraphObject(asset.getClassName(), asset.getId(), (factory == undefined? this.factory : factory));
+    return new GraphObject(asset.GetClassName(), asset.GetId(), (factory == undefined? this.factory : factory));
   }
 
   public GetAssetFromObject(obj: GraphObject) : ItAsset {

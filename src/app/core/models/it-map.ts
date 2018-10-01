@@ -1,4 +1,4 @@
-import { ItAsset, ItAssetStatus } from './it-asset';
+import { ItAsset, ItAssetStatus, ItAssetID } from './it-asset';
 
 export enum ItMapType {
   ENV="ENV. DIAGRAM",
@@ -7,7 +7,7 @@ export enum ItMapType {
 }
 
 export class ItMap extends ItAsset {
-	private assetID : number;
+	private assetID : ItAssetID;
 	private assetClass : string;
   private graphData : string;
   private asset : ItAsset;
@@ -18,9 +18,9 @@ export class ItMap extends ItAsset {
 
     if (asset!=null){
     	this.asset=asset;
-    	this.assetID=asset.getID();
-    	this.assetClass=asset.getClassName();
-      this.asset.addMap(this, true);
+    	this.assetID=asset.GetId();
+    	this.assetClass=asset.GetClassName();
+      this.asset.AddMap(this, true);
     }
     console.log('ItMap.constructor ', this);
   }
