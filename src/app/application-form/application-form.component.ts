@@ -15,6 +15,7 @@ import { inspect } from 'util';
 export class ApplicationFormComponent {
   @Input() guiCtrl: GuiCtrlComponent;
   @Input() application: ItApplication;
+ 
 
   ItApplicationTypeEnum=ItApplicationType;
   ItAssetStatusEnum=ItAssetStatus;

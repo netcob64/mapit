@@ -3,8 +3,8 @@ import { v1 as uuid } from 'uuid';
 
 export enum ItAssetStatus {
   DRA = "PROJET",
-    PRO = "PRODUCTION",
-    ARC = "ARCHIVE"
+  PRO = "PRODUCTION",
+  ARC = "ARCHIVE"
 }
 
 export type ItAssetID = any;
@@ -26,8 +26,8 @@ export class ItAsset {
   constructor(id? : ItAssetID) {
     this.className = this.constructor.name;
     this.status = ItAssetStatus.DRA;
-    this.id = id | uuid();
-    console.log('ID => ', this.id);
+    this.id = (id != undefined ? id : uuid());
+    //console.log('ID => ', this.id);
   }
 
   SetFromJson(jsonData: Object): ItAsset {
@@ -47,9 +47,11 @@ export class ItAsset {
   public GetId(): ItAssetID {
     return this.id;
   }
+
   public GetVersion(): number {
     return this.version;
   }
+
   public GetType(): string {
     return this.type;
   }
@@ -67,6 +69,7 @@ export class ItAsset {
     this.maps.concat(map);
     if (isMainMap) this.mainMap = map;
   }
+
   public GetMainMap(): ItMap {
     return this.mainMap;
   }

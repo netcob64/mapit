@@ -34,7 +34,7 @@ https://github.com/lgleim/mxgraph-typings
 `$ npm install --save @ngrx/core @ngrx/store @ngrx/effects @ngrx/router-store ngrx-store-freeze reselect rxjs-compat`
 
 ### For unique ID management
-`$ npm install uniqid --save`
+`$ npm install uuid --save`
 
 ### For Dev purpose
 `$ npm install angular-in-memory-web-api --save`
