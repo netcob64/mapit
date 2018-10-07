@@ -58,11 +58,10 @@ export class ApplicationFormComponent {
       this.error = true;
       this.errorMessage = data.message;
       this.guiCtrl.ShowMessage(this.errorMessage);
-    } else {
-      
-      console.log('ApplicationFormComponent::SaveApplicationDataHandler:  CREATED or UPDATED');
+    } else {      
+      console.log(data, 'ApplicationFormComponent::SaveApplicationDataHandler(): version='+data.version+(data.version>0?' UPDATED' : ' CREATED'));
       this.error = false;
-   
+      this.application.SetVersion(data.version);
       //this.guiCtrl.ApplicationSaved(this.application, newObj); 
       this.guiCtrl.ItAssetSaved(this.application  , this.prev);    
       this.prev.clone(this.application);

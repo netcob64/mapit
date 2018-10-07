@@ -71,9 +71,14 @@ export class GuiCtrlComponent implements GraphObjectFactory {
           <li>Passer ItApplication en generique comme Metamodel dans guiCtrl, applicaiton-list etc..</li>
           <li>permet de factoriser le code de guiCtrl..</li>
           <li>Finir la genericite mxgraph : GraphObject etc pour avoir des label et les editer sur tout type d'objet...</li>
+        
+          <li>supprimer une tab quand l'objet est detruit par app-list ou metamodel-list...</li>
         </ul>
       </h2>
-      <ul>        
+      <ul>     
+      <li>
+      voir https://medium.com/@mail.bahurudeen/create-a-dynamic-form-with-configurable-fields-and-validations-using-angular-6-994db56834da
+      pour la gestion de form dynamiques ou http://jasonwatmore.com/post/2018/05/10/angular-6-reactive-forms-validation-example</li>   
         <li><b>Map:</b> chargement depuis BDD</li>
         <li><b>Map:</b>Parametrage de la visu des graph en fonction de la date</li>
         <li><b>Map:</b>Bug affichage mxGrpah quand Zoom Chrome actif....</li>

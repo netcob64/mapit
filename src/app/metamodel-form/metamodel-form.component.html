@@ -1,29 +1,17 @@
 <div class="theForm">
   <h2>Meta Class : {{ model.name | uppercase }} <span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
-  <table>
-    <tr>
-      <td>
-         <mat-form-field>
-          <input matInput value="#{{model.id}}" placeholder="Data type" disabled>
-        </mat-form-field>
-      </td>
-       <td>
-        <mat-form-field>
-          <input matInput [(ngModel)]="model.version" placeholder="Verion" disabled>
-        </mat-form-field>
-      </td>
-    </tr>
+  <table class="formTab">
     <tr>
       <td>
         <mat-form-field>
           <input matInput [(ngModel)]="model.name" placeholder="Data type name">
         </mat-form-field>
-      </td>     
+      </td>
       <td>
         <mat-form-field>
           <mat-select [(ngModel)]="model.status" placeholder="Statut">
             <!--<mat-option value=""></mat-option>-->
-             <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
+            <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
           </mat-select>
         </mat-form-field>
       </td>
@@ -90,8 +78,7 @@
           <td>
             <mat-form-field>
               <mat-select [(ngModel)]="attr.type">
-                 <mat-option *ngFor="let option of (ItMetamodelAttributeTypeEnum | enumToArray)" [value]="option"> {{ItMetamodelAttributeTypeEnum[option]}}</mat-option>
-             
+                <mat-option *ngFor="let option of (ItMetamodelAttributeTypeEnum | enumToArray)" [value]="option"> {{ItMetamodelAttributeTypeEnum[option]}}</mat-option>
               </mat-select>
             </mat-form-field>
           </td>
@@ -137,10 +124,10 @@
           <td>
             <mat-form-field>
               <mat-select [(ngModel)]="rel.entity">
-                <mat-option  *ngFor="let e of guiCtrl.metamodels" [value]="e.id">{{e.label}}</mat-option>         
+                <mat-option *ngFor="let e of guiCtrl.metamodels" [value]="e.id">{{e.label}}</mat-option>
               </mat-select>
             </mat-form-field>
-          </td>          
+          </td>
           <td>
             <mat-form-field>
               <input matInput [(ngModel)]="rel.label">
@@ -155,10 +142,18 @@
       </tr>
     </table>
   </mat-expansion-panel>
+  <table class="formTab">
+    <tr>
+      <td class="forDebug">ID: #{{model.GetId()}}</td>
+      <td class="forDebug">Version: {{model.GetVersion()}}</td>
+    </tr>
+  </table>
   <mat-error *ngIf="error">
     {{errorMessage}}
   </mat-error>
-  <br>
-  <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
-  <button *ngIf="error" mat-raised-button color="warn" (click)="Reload();">Reload</button>
+  <div class="cmdButtons">
+    <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
+    <button mat-raised-button [disabled]="false" (click)="Delete();">Delete</button>
+    <button *ngIf="error" mat-raised-button color="warn" (click)="Reload();">Reload</button>
+  </div>
 </div>

@@ -10,6 +10,22 @@
 	font-size: smaller;
 	color: #fa0;
 }
+
+
+.formTab td {
+  padding-left: 10px;
+  padding-right:  0px;
+  padding-top: 0px;
+  padding-bottom:  0px;
+  vertical-align: top;
+  width: 50%;
+}
+
+.formTab mat-form-field {
+ width: 100%;
+}
+
+
 table {
 	width:100%;
   border-collapse: collapse;
@@ -40,4 +56,7 @@ color:#ccc;
 }
 a.mat-line {
   cursor: pointer;
+}
+.cmdButtons > button {
+  margin: 5px;
 }

@@ -13,6 +13,7 @@ export class ItAsset {
   protected className: string;
   protected id: ItAssetID;
   protected name: string;
+  protected description: string;
   protected label: string;
   protected type: string;
   protected status: ItAssetStatus;
@@ -27,6 +28,7 @@ export class ItAsset {
     this.className = this.constructor.name;
     this.status = ItAssetStatus.DRA;
     this.id = (id != undefined ? id : uuid());
+    this.version = 0;
     //console.log('ID => ', this.id);
   }
 
@@ -36,7 +38,7 @@ export class ItAsset {
       //console.log(prop+' => '+ jsonData[prop]);
       this[prop] = jsonData[prop];
     }
-    //console.log(this);
+    //console.log("SetForJson", this);
     return this;
   }
 
@@ -50,6 +52,10 @@ export class ItAsset {
 
   public GetVersion(): number {
     return this.version;
+  }
+    
+  public SetVersion(version: number): void {
+    this.version = version;
   }
 
   public GetType(): string {
@@ -82,6 +88,9 @@ export class ItAsset {
 
   public GetName(): string {
     return this.name;
+  }
+  public GetDescription(): string {
+    return this.description;
   }
 
   public SetName(name: string): void {

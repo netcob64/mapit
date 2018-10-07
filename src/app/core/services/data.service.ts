@@ -68,19 +68,20 @@ export class DataService {
     const url = `${this.saveUrl}/class=${this.objectClass}`;
     return this.http.post<ItAsset>(url, obj, httpOptions)
       .pipe(
-      tap((application: ItAsset) => this.log(`added object class=${this.objectClass} id=${obj.GetId()}`)),
+      tap(_ => this.log(`added object class=${this.objectClass} id=${obj.GetId()}`)),
+      tap(_ => console.log("DataService::Save : object version: ", obj.GetVersion()),
       catchError(this.handleError<ItAsset>('Save'))
       );
   }
 
-
-  Delete(obj: ItAsset | number): Observable<ItAsset> {
-    const id = typeof obj === 'number' ? obj : obj.GetId();
-    const url = `${this.deleteUrl}/class=${this.objectClass}&id=${id}`;
+  Delete(obj: ItAsset): Observable<ItAsset> {
+    const id = obj.GetId();
+    const version = obj.GetVersion();
+    const url = `${this.deleteUrl}/class=${this.objectClass}&id=${id}&version=${version}`;
 
     return this.http.delete<ItAsset>(url, httpOptions)
       .pipe(
-      tap(_ => this.log(`deleted object id=${id}`)),
+      tap(_ => this.log(`deleted object id=${id} version=${version}`)),
       catchError(this.handleError<ItAsset>('Delete'))
       );
   }

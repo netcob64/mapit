@@ -1,42 +1,36 @@
 <div class="appForm">
   <h2>Application: {{ application.GetName() | uppercase }}<span class="info" *ngIf="CheckToBeSaved()"> (not saved)</span></h2>
-  <table>
+  <table class="formTab">
+   
     <tr>
       <td>
         <mat-form-field>
-         <input matInput placeholder="ID" disabled value="#{{application.GetId()}}">        
-        </mat-form-field>      
-      </td>
-     
-      <td>  
-        <mat-form-field>
-          <input matInput value="{{application.GetVersion()}}" placeholder="Verion" disabled>
-        </mat-form-field>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <mat-form-field>
-
           <!--<input matInput [(ngModel)]="application.name" placeholder="Name" (change)="FireChange('name',$event)">-->
           <input matInput [(ngModel)]="application.name" placeholder="Name">
         </mat-form-field>
       </td>
-      <td colspan="2">
+      <td>
         <mat-form-field>
-           <mat-select [(ngModel)]="application.type" placeholder="Type">
-             <mat-option value=""></mat-option>
-           <mat-option *ngFor="let option of (ItApplicationTypeEnum | enumToArray)" [value]="option"> {{ItApplicationTypeEnum[option]}}</mat-option>
-          </mat-select>
+          <!--<input matInput [(ngModel)]="application.name" placeholder="Name" (change)="FireChange('name',$event)">-->
+          <textarea matInput cdkTextareaAutosize [(ngModel)]="application.description" placeholder="Description"></textarea>
         </mat-form-field>
       </td>
     </tr>
     <tr>
-      <td colspan="2">
+      <td>
+        <mat-form-field>
+          <mat-select [(ngModel)]="application.type" placeholder="Type">
+            <mat-option value=""></mat-option>
+            <mat-option *ngFor="let option of (ItApplicationTypeEnum | enumToArray)" [value]="option"> {{ItApplicationTypeEnum[option]}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    
+      <td>
         <mat-form-field>
           <mat-select [(ngModel)]="application.status" placeholder="Statut">
             <mat-option value=""></mat-option>
-           <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
+            <mat-option *ngFor="let option of (ItAssetStatusEnum | enumToArray)" [value]="option"> {{ItAssetStatusEnum[option]}}</mat-option>
           </mat-select>
         </mat-form-field>
       </td>
@@ -49,7 +43,7 @@
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
       </td>
-      <td colspan="2">
+      <td>
         <mat-form-field>
           <input matInput [matDatepicker]="picker2" placeholder="Valide jusqu' à" [(ngModel)]="application.validityEnd">
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
@@ -57,10 +51,17 @@
         </mat-form-field>
       </td>
     </tr>
+     <tr>
+      <td class="forDebug">ID: #{{application.GetId()}}</td>
+      <td class="forDebug">Version: {{application.GetVersion()}}</td>
+    </tr>
   </table>
   <mat-error *ngIf="error">
     {{errorMessage}}
   </mat-error>
-  <br>
-  <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
+  <div class="cmdButtons">
+    <button mat-raised-button [disabled]="!CheckToBeSaved()" (click)="Save();">Save</button>
+    <button mat-raised-button [disabled]="false" (click)="Delete();">Delete</button>
+    <button *ngIf="error" mat-raised-button color="warn" (click)="Reload();">Reload</button>
+  </div>
 </div>
