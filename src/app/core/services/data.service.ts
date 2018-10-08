@@ -69,7 +69,7 @@ export class DataService {
     return this.http.post<ItAsset>(url, obj, httpOptions)
       .pipe(
       tap(_ => this.log(`added object class=${this.objectClass} id=${obj.GetId()}`)),
-      tap(_ => console.log("DataService::Save : object version: ", obj.GetVersion()),
+      tap(_ => console.log("DataService::Save : object version: ", obj.GetVersion())),
       catchError(this.handleError<ItAsset>('Save'))
       );
   }

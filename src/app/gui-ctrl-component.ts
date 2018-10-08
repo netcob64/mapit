@@ -205,6 +205,8 @@ export class GuiCtrlComponent implements GraphObjectFactory {
     if (data != undefined && data.status == 'success') {
       //this.metamodels = this.metamodels.filter(a => a.id !== data.id);
       this.objectClassIndex.get(asset.GetClassName()).delete(asset.GetName());
+      let tc : TabContent = this.SearchTabContent(this.tabContentTypeForClass[asset.GetClassName()], asset);
+      this.DeleteTabContent(tc);
     } else if (data != undefined) {
       this.ShowError(data.message);
     } else {
@@ -297,15 +299,30 @@ export class GuiCtrlComponent implements GraphObjectFactory {
       this.activeTab = tab;
       this.activeTabIndex = this.tabs.length;
       this.tabs = this.tabs.concat(tab);
+      if (asset instanceof ItAsset) {
+        // add asset in asset list
+        this.objectClassIndex.get(asset.GetClassName()).set(asset.GetName(), asset);
+      }
     } else {
       // found -> show the tab
       this.activeTabIndex = index;
     }
   }
 
+  private SearchTabContent(tabType: TabContentType, asset: ItAsset | Object): TabContent {
+    let assName: string = (asset instanceof ItAsset ? asset.GetName() : "");
+    // search if asset is already open in a tab
+    return this.tabs.find(elt => {
+      return elt.type == tabType && (assName == "" || assName == elt.content.GetName())
+    });
+  
+  }
+
   DeleteTabContent(tabContent: TabContent): void {
-    this.tabs = this.tabs.filter(tc => tc !== tabContent);
-    this.activeTab = this.tabs[0];
+    if (tabContent!=undefined){
+      this.tabs = this.tabs.filter(tc => tc !== tabContent);
+      this.activeTab = this.tabs[0];
+    }
   }
 
   //------------
