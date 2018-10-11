@@ -3,7 +3,7 @@
     <button mat-button (click)="stopEventPropagation($event)" [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
-    <span>{{asset.GetName()}}</span>
+    <span>{{(asset.ItMustBeSaved()?'* ':'')}}{{asset.GetName()}}</span>
     <mat-menu #menu="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="submenu">New...</button>
       <button mat-menu-item (click)="Delete(asset, $event)">Delete</button>

@@ -35,9 +35,13 @@ export class ApplicationFormComponent {
   }
 
   CheckToBeSaved() : boolean {
-     if (this.NotEqual(this.application , this.prev) || this.application.GetId() == null) {
+     if (this.NotEqual(this.application , this.prev) || this.application.GetVersion() == 0) {
+      //this.application.SetModified(true);
+      //this.prev.SetModified(true);
       return true; 
     } else {
+      //this.application.SetModified(false);
+      //this.prev.SetModified(false);
       return false; 
     }
   }

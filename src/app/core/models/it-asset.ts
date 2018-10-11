@@ -23,6 +23,7 @@ export class ItAsset {
   protected maps: ItMap[];
   protected mainMap: ItMap;
   protected children: ItAsset[];
+  private modified: boolean =  false;
 
   constructor(id? : ItAssetID) {
     this.className = this.constructor.name;
@@ -43,7 +44,9 @@ export class ItAsset {
   }
 
   GetJsonData(): Object {
-    return JSON.parse(JSON.stringify(this));
+    let clone = JSON.parse(JSON.stringify(this));
+    clone.delete('modified');
+    return clone;
   }
 
   public GetId(): ItAssetID {
@@ -56,6 +59,14 @@ export class ItAsset {
     
   public SetVersion(version: number): void {
     this.version = version;
+  }
+
+  public SetModified(isModified: boolean): void {
+    this.modified = isModified;
+  }
+
+  public ItMustBeSaved(): boolean {
+    return this.modified || this.version == 0;
   }
 
   public GetType(): string {

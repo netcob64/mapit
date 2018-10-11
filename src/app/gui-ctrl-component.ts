@@ -140,7 +140,7 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
   GetApplicationTitle(): string {
       return this.app.title;
-    }
+  }
 
   //-------------------------
   // Meta model management
@@ -197,14 +197,24 @@ export class GuiCtrlComponent implements GraphObjectFactory {
 
   DeleteItAsset(asset: ItAsset) {
     console.log("Delete model id=" + asset.GetId() + ", name=" + asset.GetName());
-    this.dataService.SetDataType(this.dataServiceTypeForClass[asset.GetClassName()]);
-    this.dataService.Delete(asset).subscribe(data => this.DeleteItAssetDataHandler(data, asset));
+    if (asset.GetVersion() > 0) { 
+      this.dataService.SetDataType(this.dataServiceTypeForClass[asset.GetClassName()]);
+      this.dataService.Delete(asset).subscribe(data => this.DeleteItAssetDataHandler(data, asset));
+    } else {
+      // If Version=0, it means the object was never saved in DB
+      // remove asset from list
+      this.objectClassIndex.get(asset.GetClassName()).delete(asset.GetName());
+      // remove asset edition tab
+      let tc : TabContent = this.SearchTabContent(this.tabContentTypeForClass[asset.GetClassName()], asset);
+      this.DeleteTabContent(tc);
+    }
   }
 
   DeleteItAssetDataHandler(data: any, asset: ItAsset): void {
     if (data != undefined && data.status == 'success') {
-      //this.metamodels = this.metamodels.filter(a => a.id !== data.id);
-      this.objectClassIndex.get(asset.GetClassName()).delete(asset.GetName());
+      // remove asset from list
+      this.objectClassIndex.get(asset.GetClassName()).delete(asset.GetName());      
+      // remove asset edition tab
       let tc : TabContent = this.SearchTabContent(this.tabContentTypeForClass[asset.GetClassName()], asset);
       this.DeleteTabContent(tc);
     } else if (data != undefined) {

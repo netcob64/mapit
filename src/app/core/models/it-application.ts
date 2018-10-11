@@ -17,6 +17,7 @@ export class ItApplication extends ItAsset {
 
         //console.log('ItApplications.constructor ', this);
 	}
+	
 	public addMessage(message: ItMessage, isInMessage: boolean = false): void {
 		if (isInMessage){
 			this.inMessages.concat(message);
@@ -33,7 +34,6 @@ export class ItApplication extends ItAsset {
  	}
   
 }
-
 
 export class ItApplicationList  {
   applications: ItApplication[];
